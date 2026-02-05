@@ -1,0 +1,21 @@
+<div class="phase-header">
+  <div class="phase-number">{{ phase().order + 1 }}</div>
+  <input
+    type="text"
+    class="phase-name-input"
+    [value]="phase().name"
+    (blur)="nameChange.emit($any($event.target).value)"
+    (keydown.enter)="$any($event.target).blur()"
+    placeholder="Phase Name"
+  />
+  @if (canRemove()) {
+    <button
+      class="remove-btn"
+      (click)="remove.emit()"
+      title="Remove phase"
+      aria-label="Remove phase"
+    >
+      ✕
+    </button>
+  }
+</div>

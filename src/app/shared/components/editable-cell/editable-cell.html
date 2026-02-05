@@ -1,0 +1,26 @@
+@if (isEditing()) {
+  <textarea
+    #textarea
+    class="edit-textarea"
+    [rows]="minRows()"
+    [value]="editValue()"
+    (input)="updateValue($event)"
+    (blur)="saveAndClose()"
+    (keydown)="handleKeydown($event)"
+  ></textarea>
+} @else {
+  <div
+    class="display-content"
+    [class.has-content]="value()"
+    (click)="startEditing()"
+    (keydown.enter)="startEditing()"
+    tabindex="0"
+    role="button"
+  >
+    @if (value()) {
+      <span class="content-text">{{ value() }}</span>
+    } @else {
+      <span class="placeholder-text">{{ placeholder() }}</span>
+    }
+  </div>
+}

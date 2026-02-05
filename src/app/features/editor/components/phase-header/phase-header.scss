@@ -1,0 +1,71 @@
+.phase-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: #f3f4f6;
+  border-bottom: 2px solid var(--color-primary);
+  min-height: 56px;
+}
+
+.phase-number {
+  width: 24px;
+  height: 24px;
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.phase-name-input {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  border: none;
+  background: transparent;
+  padding: 4px;
+  border-radius: 4px;
+  min-width: 0;
+
+  &:hover {
+    background-color: white;
+  }
+
+  &:focus {
+    outline: none;
+    background-color: white;
+    box-shadow: 0 0 0 2px var(--color-primary);
+  }
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+}
+
+.remove-btn {
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #9ca3af;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+
+  &:hover {
+    color: var(--color-error);
+    border-color: var(--color-error);
+    background-color: #fef2f2;
+  }
+}

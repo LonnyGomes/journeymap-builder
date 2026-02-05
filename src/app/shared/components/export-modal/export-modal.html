@@ -1,0 +1,59 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Export Journey Map</h2>
+      <button class="close-btn" (click)="onClose()" aria-label="Close">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="option-group">
+        <label class="option-label">Format</label>
+        <div class="option-buttons">
+          <button
+            class="option-btn"
+            [class.active]="selectedFormat() === 'pdf'"
+            (click)="selectFormat('pdf')"
+          >
+            <span class="option-icon">📄</span>
+            <span class="option-text">PDF</span>
+          </button>
+          <button
+            class="option-btn"
+            [class.active]="selectedFormat() === 'png'"
+            (click)="selectFormat('png')"
+          >
+            <span class="option-icon">🖼️</span>
+            <span class="option-text">PNG</span>
+          </button>
+        </div>
+      </div>
+
+      @if (selectedFormat() === 'pdf') {
+        <div class="option-group">
+          <label class="option-label">Paper Size</label>
+          <div class="option-buttons">
+            <button
+              class="option-btn"
+              [class.active]="selectedPaperSize() === 'letter'"
+              (click)="selectPaperSize('letter')"
+            >
+              <span class="option-text">Letter (8.5" x 11")</span>
+            </button>
+            <button
+              class="option-btn"
+              [class.active]="selectedPaperSize() === 'tabloid'"
+              (click)="selectPaperSize('tabloid')"
+            >
+              <span class="option-text">Tabloid (11" x 17")</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="onClose()">Cancel</button>
+      <button class="btn btn-primary" (click)="onExport()">Export</button>
+    </div>
+  </div>
+</div>

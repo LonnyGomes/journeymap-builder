@@ -1,0 +1,43 @@
+<div class="phase-column">
+  <app-phase-header
+    [phase]="phase()"
+    [canRemove]="canRemove()"
+    [isLast]="isLast()"
+    (nameChange)="nameChange.emit($event)"
+    (remove)="remove.emit()"
+  />
+
+  <div class="phase-cell">
+    <app-editable-cell
+      [value]="phase().actions"
+      placeholder="What actions does the user take?"
+      (valueChange)="actionsChange.emit($event)"
+    />
+  </div>
+
+  <div class="phase-cell">
+    <app-editable-cell
+      [value]="phase().mindsets"
+      placeholder="What is the user thinking?"
+      (valueChange)="mindsetsChange.emit($event)"
+    />
+  </div>
+
+  <div class="phase-cell emotion-cell">
+    <button class="emotion-btn" (click)="showEmotionPicker.emit()">
+      @if (phase().emotion) {
+        <span class="emotion-display">{{ phase().emotion }}</span>
+      } @else {
+        <span class="emotion-placeholder">Select emotion</span>
+      }
+    </button>
+  </div>
+
+  <div class="phase-cell">
+    <app-editable-cell
+      [value]="phase().opportunities"
+      placeholder="What opportunities exist?"
+      (valueChange)="opportunitiesChange.emit($event)"
+    />
+  </div>
+</div>

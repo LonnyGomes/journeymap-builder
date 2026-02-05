@@ -1,0 +1,74 @@
+<div class="editor-container">
+  <app-toolbar
+    (exportJson)="exportJson()"
+    (importJson)="importJson()"
+    (exportPdf)="openExportModal()"
+    (exportPng)="exportPng()"
+  />
+
+  <div #exportArea class="export-area">
+    <app-header-section />
+
+    <div class="phase-grid-container">
+      <div class="row-labels">
+        <div class="label-header"></div>
+        @for (label of rowLabels; track label) {
+          <div class="row-label">{{ label }}</div>
+        }
+      </div>
+
+      <div class="phases-scroll">
+        <div class="phases-wrapper">
+          @for (phase of phases(); track phase.id; let last = $last) {
+            <app-phase-column
+              [phase]="phase"
+              [canRemove]="canRemovePhase()"
+              [isLast]="last"
+              (nameChange)="updatePhaseName(phase.id, $event)"
+              (actionsChange)="updatePhaseActions(phase.id, $event)"
+              (mindsetsChange)="updatePhaseMindsets(phase.id, $event)"
+              (emotionChange)="selectEmotion($event)"
+              (opportunitiesChange)="updatePhaseOpportunities(phase.id, $event)"
+              (remove)="removePhase(phase.id)"
+              (showEmotionPicker)="showEmotionPicker(phase.id)"
+            />
+          }
+
+          @if (canAddPhase()) {
+            <div class="add-phase-column">
+              <button class="add-phase-btn" (click)="addPhase()">
+                <span class="add-icon">+</span>
+                <span>Add Phase</span>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (emotionPickerPhaseId()) {
+    <div class="emotion-picker-overlay" (click)="closeEmotionPicker()">
+      <div class="emotion-picker" (click)="$event.stopPropagation()">
+        <h3 class="emotion-picker-title">Select Emotion</h3>
+        <div class="emotion-grid">
+          @for (option of emotionOptions; track option.emoji) {
+            <button
+              class="emotion-option"
+              (click)="selectEmotion(option.emoji)"
+              [title]="option.label"
+            >
+              <span class="option-emoji">{{ option.emoji }}</span>
+              <span class="option-label">{{ option.label }}</span>
+            </button>
+          }
+        </div>
+        <button class="clear-emotion-btn" (click)="selectEmotion(null)">Clear Selection</button>
+      </div>
+    </div>
+  }
+
+  @if (showExportModal()) {
+    <app-export-modal (close)="closeExportModal()" (export)="handleExport($event)" />
+  }
+</div>
