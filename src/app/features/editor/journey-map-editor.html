@@ -1,70 +1,90 @@
 <div class="editor-container">
-  <app-toolbar
-    (exportJson)="exportJson()"
-    (importJson)="importJson()"
-    (exportPdf)="openExportModal()"
-    (exportPng)="exportPng()"
-  />
+  <div class="editor-shell">
+    <app-toolbar
+      (exportJson)="exportJson()"
+      (importJson)="importJson()"
+      (exportPdf)="openExportModal()"
+      (exportPng)="exportPng()"
+    />
 
-  <div class="editor-body">
-    <div #exportArea class="export-area">
-      <app-header-section />
-
-      <div class="phase-grid-container">
-        <!-- Row Labels (fixed sidebar) -->
-        <div class="row-labels">
-          <div class="label-header">
-            <span class="label-header-text">Phases</span>
-          </div>
-          @for (row of rowLabels; track row.label) {
-            <div class="row-label" [class.emotion-arc-label]="row.label === 'Emotional Arc'">
-              <mat-icon class="row-label-icon">{{ row.icon }}</mat-icon>
-              <span class="row-label-text">{{ row.label }}</span>
-            </div>
-          }
+    <div class="editor-body">
+      <section class="editor-intro">
+        <div class="intro-copy">
+          <p class="intro-eyebrow">Journey Mapping Workspace</p>
+          <h1 class="intro-title">Build a clear story of your user journey</h1>
+          <p class="intro-description">
+            Map actions, mindset, opportunities, and emotional momentum across every phase.
+          </p>
         </div>
-
-        <!-- Scrollable phase columns -->
-        <div class="phases-scroll">
-          <div class="phases-wrapper">
-            @for (phase of phases(); track phase.id; let i = $index; let last = $last) {
-              <div class="phase-track">
-                <app-phase-column
-                  [phase]="phase"
-                  [canRemove]="canRemovePhase()"
-                  [isLast]="last"
-                  [phaseColor]="getPhaseColor(i)"
-                  (nameChange)="updatePhaseName(phase.id, $event)"
-                  (actionsChange)="updatePhaseActions(phase.id, $event)"
-                  (mindsetsChange)="updatePhaseMindsets(phase.id, $event)"
-                  (emotionChange)="selectEmotion($event)"
-                  (opportunitiesChange)="updatePhaseOpportunities(phase.id, $event)"
-                  (remove)="removePhase(phase.id)"
-                  (showEmotionPicker)="showEmotionPicker(phase.id)"
-                />
-              </div>
-            }
-
-            @if (canAddPhase()) {
-              <div class="add-phase-column">
-                <button class="add-phase-btn" (click)="addPhase()" matTooltip="Add a new phase">
-                  <mat-icon>add_circle_outline</mat-icon>
-                  <span class="add-phase-text">Add Phase</span>
-                </button>
-              </div>
-            }
+        <div class="intro-highlights">
+          <div class="highlight-pill">
+            <mat-icon>edit_note</mat-icon>
+            <span>Click any field to edit in place</span>
           </div>
+          <div class="highlight-pill">
+            <mat-icon>history</mat-icon>
+            <span>Undo and redo with keyboard shortcuts</span>
+          </div>
+        </div>
+      </section>
 
-          <!-- Emotion curve overlay spanning all phases -->
-          <div class="emotion-curve-overlay">
-            <app-emotion-curve [phases]="phases()" [columnWidth]="220" />
+      <div class="editor-canvas">
+        <div #exportArea class="export-area">
+          <app-header-section />
+
+          <div class="phase-grid-container">
+            <div class="row-labels">
+              <div class="label-header">
+                <span class="label-header-text">Phases</span>
+              </div>
+              @for (row of rowLabels; track row.label) {
+                <div class="row-label" [class.emotion-arc-label]="row.label === 'Emotional Arc'">
+                  <mat-icon class="row-label-icon">{{ row.icon }}</mat-icon>
+                  <span class="row-label-text">{{ row.label }}</span>
+                </div>
+              }
+            </div>
+
+            <div class="phases-scroll">
+              <div class="phases-wrapper">
+                @for (phase of phases(); track phase.id; let i = $index; let last = $last) {
+                  <div class="phase-track">
+                    <app-phase-column
+                      [phase]="phase"
+                      [canRemove]="canRemovePhase()"
+                      [isLast]="last"
+                      [phaseColor]="getPhaseColor(i)"
+                      (nameChange)="updatePhaseName(phase.id, $event)"
+                      (actionsChange)="updatePhaseActions(phase.id, $event)"
+                      (mindsetsChange)="updatePhaseMindsets(phase.id, $event)"
+                      (emotionChange)="selectEmotion($event)"
+                      (opportunitiesChange)="updatePhaseOpportunities(phase.id, $event)"
+                      (remove)="removePhase(phase.id)"
+                      (showEmotionPicker)="showEmotionPicker(phase.id)"
+                    />
+                  </div>
+                }
+
+                @if (canAddPhase()) {
+                  <div class="add-phase-column">
+                    <button class="add-phase-btn" (click)="addPhase()" matTooltip="Add a new phase">
+                      <mat-icon>add_circle_outline</mat-icon>
+                      <span class="add-phase-text">Add Phase</span>
+                    </button>
+                  </div>
+                }
+              </div>
+
+              <div class="emotion-curve-overlay">
+                <app-emotion-curve [phases]="phases()" [columnWidth]="220" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Emotion Picker Modal -->
   @if (emotionPickerPhaseId()) {
     <div class="emotion-picker-overlay" (click)="closeEmotionPicker()">
       <div class="emotion-picker" (click)="$event.stopPropagation()">

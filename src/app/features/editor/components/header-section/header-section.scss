@@ -1,34 +1,28 @@
 .header-section {
-  padding: 28px 32px 24px;
-  background-color: var(--color-bg-surface);
+  padding: 28px clamp(14px, 2vw, 28px) 20px;
+  background:
+    radial-gradient(circle at 98% 0%, rgba(15, 118, 110, 0.09), transparent 28%),
+    linear-gradient(180deg, #ffffff 0%, #f8fbfd 100%);
   border-bottom: 1px solid var(--color-border);
-
-  @media (max-width: 768px) {
-    padding: 20px 16px;
-  }
 }
 
 .title-row {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .title-input {
   width: 100%;
-  font-size: 26px;
-  font-weight: 700;
+  font-size: clamp(28px, 2.4vw, 36px);
+  font-weight: 800;
   color: var(--color-text-primary);
   border: none;
   border-bottom: 2px solid transparent;
-  padding: 6px 0;
+  padding: 4px 0 8px;
   outline: none;
   background: transparent;
   font-family: inherit;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   transition: border-color var(--transition-base);
-
-  @media (max-width: 768px) {
-    font-size: 22px;
-  }
 
   &:hover {
     border-bottom-color: var(--color-border);
@@ -45,10 +39,10 @@
 
 .meta-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 1.25fr 1fr 1fr;
+  gap: 14px;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1140px) {
     grid-template-columns: 1fr 1fr;
   }
 
@@ -59,14 +53,16 @@
 }
 
 .meta-card {
-  background-color: var(--color-bg-surface);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: box-shadow var(--transition-base);
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
 
   &:hover {
     box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
   }
 }
 
@@ -78,18 +74,18 @@
 }
 
 .card-icon-wrapper {
-  width: 30px;
-  height: 30px;
-  border-radius: var(--radius-sm);
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 
   .mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
     color: white;
   }
 }
@@ -99,20 +95,20 @@
 }
 
 .scenario-icon {
-  background-color: #7c3aed;
+  background-color: #2a6f97;
 }
 
 .expectations-icon {
-  background-color: #059669;
+  background-color: #2c9867;
 }
 
 .card-title {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-secondary);
   margin: 0;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
 .card-body {
@@ -130,24 +126,24 @@
 .field-label {
   display: block;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-text-muted);
-  margin-bottom: 3px;
+  margin-bottom: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 
 .goals-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
 .goal-chip {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 2px 4px 2px 8px;
+  padding: 3px 4px 3px 8px;
   background-color: var(--color-bg-subtle);
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);
@@ -174,7 +170,7 @@
   transition: opacity var(--transition-fast);
 
   .goal-chip:hover & {
-    opacity: 0.6;
+    opacity: 0.62;
   }
 
   &:hover {
@@ -194,12 +190,12 @@
   align-items: center;
   gap: 4px;
   background: none;
-  border: 1px dashed var(--color-border);
+  border: 1px dashed var(--color-border-strong);
   border-radius: var(--radius-sm);
-  padding: 5px 10px;
+  padding: 6px 10px;
   color: var(--color-text-muted);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
   margin-top: 4px;

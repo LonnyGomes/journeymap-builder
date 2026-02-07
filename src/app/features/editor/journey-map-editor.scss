@@ -1,14 +1,126 @@
 .editor-container {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 20px clamp(12px, 2.6vw, 30px) 24px;
+  overflow: hidden;
+}
+
+.editor-container::before,
+.editor-container::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.editor-container::before {
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(15, 118, 110, 0.14) 0%, rgba(15, 118, 110, 0) 70%);
+  top: -250px;
+  right: -120px;
+}
+
+.editor-container::after {
+  width: 460px;
+  height: 460px;
+  background: radial-gradient(circle, rgba(255, 122, 89, 0.12) 0%, rgba(255, 122, 89, 0) 74%);
+  bottom: -260px;
+  left: -160px;
+}
+
+.editor-shell {
+  position: relative;
+  z-index: 1;
+  width: min(var(--app-max-width), 100%);
+  height: 100%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  height: 100dvh;
-  background-color: var(--color-bg-page);
+  min-height: 0;
+  border-radius: 28px;
+  border: 1px solid rgba(188, 204, 220, 0.75);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 20px 42px rgba(16, 42, 67, 0.14);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
 }
 
 .editor-body {
   flex: 1;
   overflow: auto;
+  padding: 20px clamp(12px, 1.8vw, 24px) 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(244, 248, 251, 0.9) 100%);
+}
+
+.editor-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 18px;
+  margin-bottom: 16px;
+  animation: introReveal var(--transition-slow) ease;
+}
+
+.intro-copy {
+  max-width: 760px;
+}
+
+.intro-eyebrow {
+  margin: 0 0 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.intro-title {
+  margin: 0;
+  font-size: clamp(24px, 2.2vw, 34px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--color-text-primary);
+}
+
+.intro-description {
+  margin: 10px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+
+.intro-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 280px;
+}
+
+.highlight-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(188, 204, 220, 0.9);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  box-shadow: var(--shadow-xs);
+
+  .mat-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    color: var(--color-primary);
+  }
+}
+
+.editor-canvas {
+  position: relative;
+  min-width: 0;
 }
 
 .export-area {
@@ -16,32 +128,104 @@
   flex-direction: column;
   min-height: 100%;
   background-color: var(--color-bg-surface);
+  border-radius: 20px;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  animation: canvasReveal var(--transition-slow) ease;
 }
 
-// ---- Phase Grid ----
+.export-area.export-mode {
+  min-height: auto;
+  background-color: #fff;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+
+  * {
+    animation: none !important;
+    transition: none !important;
+    caret-color: transparent !important;
+  }
+
+  .phase-grid-container {
+    width: 100%;
+    overflow: visible;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .phases-scroll {
+    flex: 1 1 auto;
+    width: auto;
+    overflow: visible !important;
+  }
+
+  .phases-wrapper {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .phase-track {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .phase-column {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .emotion-curve-overlay {
+    width: 100%;
+  }
+
+  app-emotion-curve,
+  .emotion-curve-container,
+  .emotion-curve-svg {
+    width: 100% !important;
+  }
+
+  .export-static-input {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .export-static-input[data-export-empty='true'] {
+    color: var(--color-text-placeholder) !important;
+  }
+
+  .add-phase-column {
+    display: none !important;
+  }
+}
+
 .phase-grid-container {
   flex: 1;
   display: flex;
   overflow: hidden;
   position: relative;
   border-top: 1px solid var(--color-border);
+  background-color: var(--color-bg-surface);
 }
 
 .row-labels {
   display: flex;
   flex-direction: column;
-  width: 140px;
+  width: 152px;
   flex-shrink: 0;
-  background-color: var(--color-bg-surface);
+  background: linear-gradient(180deg, #f8fbfd 0%, #f2f7fb 100%);
   border-right: 1px solid var(--color-border);
-  z-index: 10;
+  position: sticky;
+  left: 0;
+  z-index: 12;
 
   @media (max-width: 768px) {
-    width: 100px;
+    width: 112px;
   }
 
   @media (max-width: 480px) {
-    width: 80px;
+    width: 92px;
   }
 }
 
@@ -50,7 +234,7 @@
   display: flex;
   align-items: center;
   padding: 0 16px;
-  background-color: var(--color-bg-subtle);
+  background: rgba(255, 255, 255, 0.8);
   border-bottom: 1px solid var(--color-border);
 
   @media (max-width: 480px) {
@@ -60,13 +244,13 @@
 
 .label-header-text {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
 
   @media (max-width: 480px) {
-    font-size: 10px;
+    font-size: 9px;
   }
 }
 
@@ -74,7 +258,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 16px;
+  padding: 0 14px;
   min-height: 100px;
   border-bottom: 1px solid var(--color-divider);
 
@@ -89,12 +273,10 @@
     gap: 4px;
   }
 
-  // Emotional Arc row height
   &.emotion-arc-label {
     min-height: 160px;
   }
 
-  // Emotions row (individual per-phase pickers)
   &:nth-child(5) {
     min-height: 80px;
 
@@ -135,25 +317,25 @@
   }
 }
 
-// ---- Phases Scroll Area ----
 .phases-scroll {
   flex: 1;
   overflow-x: auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   position: relative;
+  background: #fff;
 
   &::-webkit-scrollbar {
-    height: 8px;
+    height: 10px;
   }
 
   &::-webkit-scrollbar-track {
-    background: var(--color-bg-subtle);
+    background: #edf3f8;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--color-border-strong);
-    border-radius: 4px;
+    background: #bcccdc;
+    border-radius: 999px;
 
     &:hover {
       background: var(--color-text-muted);
@@ -171,11 +353,8 @@
   flex-direction: column;
 }
 
-// ---- Emotion Curve Overlay ----
 .emotion-curve-overlay {
   position: absolute;
-  // Position it in the "Emotional Arc" row
-  // Header: 52px, Actions: 100px, Mindsets: 100px = 252px top
   top: 252px;
   left: 0;
   height: 160px;
@@ -183,12 +362,12 @@
   z-index: 5;
 }
 
-// ---- Add Phase Column ----
 .add-phase-column {
   display: flex;
   align-items: flex-start;
   padding: 12px;
   min-width: 120px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbfe 100%);
 }
 
 .add-phase-btn {
@@ -197,14 +376,14 @@
   align-items: center;
   gap: 8px;
   padding: 16px 24px;
-  border: 2px dashed var(--color-border);
+  border: 2px dashed var(--color-border-strong);
   border-radius: var(--radius-lg);
   background-color: var(--color-bg-surface);
   color: var(--color-text-muted);
   cursor: pointer;
   transition: all var(--transition-base);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   font-family: inherit;
   margin-top: 0;
 
@@ -224,6 +403,7 @@
     border-color: var(--color-primary);
     color: var(--color-primary);
     background-color: var(--color-primary-50);
+    transform: translateY(-1px);
 
     .mat-icon {
       color: var(--color-primary);
@@ -240,18 +420,17 @@
   white-space: nowrap;
 }
 
-// ---- Emotion Picker Modal ----
 .emotion-picker-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(4px);
+  background-color: rgba(16, 42, 67, 0.42);
+  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
   padding: 20px;
-  animation: overlayFadeIn 0.15s ease;
+  animation: overlayFadeIn 0.18s ease;
 }
 
 @keyframes overlayFadeIn {
@@ -267,9 +446,10 @@
   background-color: var(--color-bg-surface);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-overlay);
+  border: 1px solid rgba(188, 204, 220, 0.7);
   max-width: 420px;
   width: 100%;
-  animation: pickerSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: pickerSlideIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 
   @media (max-width: 480px) {
@@ -280,7 +460,7 @@
 
 @keyframes pickerSlideIn {
   from {
-    transform: translateY(8px) scale(0.98);
+    transform: translateY(10px) scale(0.98);
     opacity: 0;
   }
   to {
@@ -299,7 +479,7 @@
 .emotion-picker-title {
   margin: 0;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-primary);
   letter-spacing: -0.01em;
 }
@@ -389,7 +569,7 @@
   color: var(--color-text-secondary);
   cursor: pointer;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   transition: all var(--transition-fast);
   font-family: inherit;
 
@@ -402,5 +582,72 @@
   &:hover {
     background-color: var(--color-error-light);
     color: var(--color-error);
+  }
+}
+
+@keyframes introReveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes canvasReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .editor-intro {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .intro-highlights {
+    flex-direction: row;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .editor-container {
+    padding: 10px;
+  }
+
+  .editor-shell {
+    border-radius: 18px;
+  }
+
+  .editor-body {
+    padding: 14px 10px 16px;
+  }
+
+  .editor-intro {
+    margin-bottom: 12px;
+    gap: 12px;
+  }
+
+  .intro-description {
+    font-size: 14px;
+  }
+
+  .highlight-pill {
+    font-size: 11px;
+    padding: 7px 10px;
+  }
+
+  .export-area {
+    border-radius: 16px;
   }
 }

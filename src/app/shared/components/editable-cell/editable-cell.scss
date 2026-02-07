@@ -16,11 +16,11 @@
   resize: vertical;
   outline: none;
   color: var(--color-text-primary);
-  background-color: var(--color-bg-surface);
-  transition: box-shadow var(--transition-fast);
+  background-color: #fff;
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
 
   &:focus {
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.16);
   }
 }
 
