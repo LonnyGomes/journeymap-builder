@@ -1,8 +1,11 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { PwaService } from '../../../core/services/pwa.service';
 
 @Component({
   selector: 'app-pwa-install-prompt',
+  imports: [MatIconModule, MatButtonModule],
   templateUrl: './pwa-install-prompt.html',
   styleUrl: './pwa-install-prompt.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

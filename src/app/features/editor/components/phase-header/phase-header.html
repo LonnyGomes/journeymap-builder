@@ -1,5 +1,7 @@
-<div class="phase-header">
-  <div class="phase-number">{{ phase().order + 1 }}</div>
+<div class="phase-header" [style.border-top-color]="phaseColor()">
+  <div class="phase-number" [style.background-color]="phaseColor()">
+    {{ phase().order + 1 }}
+  </div>
   <input
     type="text"
     class="phase-name-input"
@@ -10,12 +12,13 @@
   />
   @if (canRemove()) {
     <button
+      mat-icon-button
       class="remove-btn"
       (click)="remove.emit()"
-      title="Remove phase"
+      matTooltip="Remove phase"
       aria-label="Remove phase"
     >
-      ✕
+      <mat-icon>close</mat-icon>
     </button>
   }
 </div>

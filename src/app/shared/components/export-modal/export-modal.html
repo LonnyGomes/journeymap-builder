@@ -2,7 +2,9 @@
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h2 class="modal-title">Export Journey Map</h2>
-      <button class="close-btn" (click)="onClose()" aria-label="Close">✕</button>
+      <button mat-icon-button (click)="onClose()" aria-label="Close">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
 
     <div class="modal-body">
@@ -14,16 +16,18 @@
             [class.active]="selectedFormat() === 'pdf'"
             (click)="selectFormat('pdf')"
           >
-            <span class="option-icon">📄</span>
+            <mat-icon class="option-icon">picture_as_pdf</mat-icon>
             <span class="option-text">PDF</span>
+            <span class="option-desc">Best for printing</span>
           </button>
           <button
             class="option-btn"
             [class.active]="selectedFormat() === 'png'"
             (click)="selectFormat('png')"
           >
-            <span class="option-icon">🖼️</span>
+            <mat-icon class="option-icon">image</mat-icon>
             <span class="option-text">PNG</span>
+            <span class="option-desc">Best for sharing</span>
           </button>
         </div>
       </div>
@@ -37,14 +41,16 @@
               [class.active]="selectedPaperSize() === 'letter'"
               (click)="selectPaperSize('letter')"
             >
-              <span class="option-text">Letter (8.5" x 11")</span>
+              <span class="option-text">Letter</span>
+              <span class="option-desc">8.5" x 11"</span>
             </button>
             <button
               class="option-btn"
               [class.active]="selectedPaperSize() === 'tabloid'"
               (click)="selectPaperSize('tabloid')"
             >
-              <span class="option-text">Tabloid (11" x 17")</span>
+              <span class="option-text">Tabloid</span>
+              <span class="option-desc">11" x 17"</span>
             </button>
           </div>
         </div>
@@ -52,8 +58,11 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="onClose()">Cancel</button>
-      <button class="btn btn-primary" (click)="onExport()">Export</button>
+      <button mat-stroked-button (click)="onClose()">Cancel</button>
+      <button mat-flat-button color="primary" (click)="onExport()">
+        <mat-icon>download</mat-icon>
+        Export
+      </button>
     </div>
   </div>
 </div>

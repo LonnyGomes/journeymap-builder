@@ -6,67 +6,105 @@
       [value]="map().title"
       (blur)="updateTitle($any($event.target).value)"
       (keydown.enter)="$any($event.target).blur()"
-      placeholder="Journey Map Title"
+      placeholder="Untitled Journey Map"
     />
   </div>
 
   <div class="meta-grid">
-    <div class="meta-card">
-      <h3 class="meta-label">Actor / Persona</h3>
-      <div class="meta-field">
-        <label class="field-label">Name</label>
-        <app-editable-cell
-          [value]="map().actor.name"
-          [multiline]="false"
-          placeholder="Who is the user?"
-          (valueChange)="updateActorName($event)"
-        />
+    <!-- Actor / Persona Card -->
+    <div class="meta-card actor-card">
+      <div class="card-header">
+        <div class="card-icon-wrapper actor-icon">
+          <mat-icon>person</mat-icon>
+        </div>
+        <h3 class="card-title">Actor / Persona</h3>
       </div>
-      <div class="meta-field">
-        <label class="field-label">Description</label>
-        <app-editable-cell
-          [value]="map().actor.description"
-          placeholder="Describe the persona..."
-          (valueChange)="updateActorDescription($event)"
-        />
-      </div>
-      <div class="meta-field">
-        <label class="field-label">Goals</label>
-        <div class="goals-list">
-          @for (goal of map().actor.goals; track $index; let i = $index) {
-            <div class="goal-item">
-              <span class="goal-bullet">•</span>
-              <app-editable-cell
-                [value]="goal"
-                [multiline]="false"
-                placeholder="Enter a goal..."
-                (valueChange)="updateGoal(i, $event)"
-              />
-            </div>
-          }
-          <button class="add-goal-btn" (click)="addGoal()">+ Add Goal</button>
+
+      <div class="card-body">
+        <div class="meta-field">
+          <label class="field-label">Name</label>
+          <app-editable-cell
+            [value]="map().actor.name"
+            [multiline]="false"
+            placeholder="Who is the user?"
+            (valueChange)="updateActorName($event)"
+          />
+        </div>
+
+        <div class="meta-field">
+          <label class="field-label">Description</label>
+          <app-editable-cell
+            [value]="map().actor.description"
+            placeholder="Describe the persona..."
+            (valueChange)="updateActorDescription($event)"
+          />
+        </div>
+
+        <div class="meta-field">
+          <label class="field-label">Goals</label>
+          <div class="goals-list">
+            @for (goal of map().actor.goals; track $index; let i = $index) {
+              <div class="goal-chip">
+                <mat-icon class="goal-icon">flag</mat-icon>
+                <app-editable-cell
+                  [value]="goal"
+                  [multiline]="false"
+                  placeholder="Enter a goal..."
+                  (valueChange)="updateGoal(i, $event)"
+                />
+                <button
+                  mat-icon-button
+                  class="goal-remove"
+                  (click)="removeGoal(i)"
+                  matTooltip="Remove goal"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            }
+            <button class="add-goal-btn" (click)="addGoal()">
+              <mat-icon>add</mat-icon>
+              <span>Add goal</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- Scenario Card -->
     <div class="meta-card">
-      <h3 class="meta-label">Scenario</h3>
-      <app-editable-cell
-        [value]="map().scenario"
-        placeholder="Describe the scenario or situation..."
-        [minRows]="4"
-        (valueChange)="updateScenario($event)"
-      />
+      <div class="card-header">
+        <div class="card-icon-wrapper scenario-icon">
+          <mat-icon>description</mat-icon>
+        </div>
+        <h3 class="card-title">Scenario</h3>
+      </div>
+      <div class="card-body">
+        <app-editable-cell
+          [value]="map().scenario"
+          placeholder="Describe the scenario or situation the user encounters..."
+          [minRows]="4"
+          (valueChange)="updateScenario($event)"
+        />
+      </div>
     </div>
 
+    <!-- Expectations Card -->
     <div class="meta-card">
-      <h3 class="meta-label">Expectations</h3>
-      <app-editable-cell
-        [value]="map().expectations"
-        placeholder="What does the user expect from this journey?"
-        [minRows]="4"
-        (valueChange)="updateExpectations($event)"
-      />
+      <div class="card-header">
+        <div class="card-icon-wrapper expectations-icon">
+          <mat-icon>verified</mat-icon>
+        </div>
+        <h3 class="card-title">Expectations</h3>
+      </div>
+      <div class="card-body">
+        <app-editable-cell
+          [value]="map().expectations"
+          placeholder="What does the user expect from this journey?"
+          [minRows]="4"
+          (valueChange)="updateExpectations($event)"
+        />
+      </div>
     </div>
   </div>
 </div>

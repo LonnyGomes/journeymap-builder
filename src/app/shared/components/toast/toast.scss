@@ -6,76 +6,110 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  @media (max-width: 480px) {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
 }
 
 .toast {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  animation: slideIn 0.3s ease;
-  min-width: 280px;
-  max-width: 400px;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  animation: toastSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 300px;
+  max-width: 420px;
+  backdrop-filter: blur(8px);
+
+  @media (max-width: 480px) {
+    min-width: auto;
+  }
 }
 
-@keyframes slideIn {
+@keyframes toastSlideIn {
   from {
-    transform: translateX(100%);
+    transform: translateY(12px);
     opacity: 0;
   }
   to {
-    transform: translateX(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
 
 .toast-success {
-  background-color: #ecfdf5;
+  background-color: var(--color-success-light);
   border: 1px solid var(--color-success);
   color: #065f46;
+
+  .toast-icon {
+    color: var(--color-success);
+  }
 }
 
 .toast-error {
-  background-color: #fef2f2;
+  background-color: var(--color-error-light);
   border: 1px solid var(--color-error);
   color: #991b1b;
+
+  .toast-icon {
+    color: var(--color-error);
+  }
 }
 
 .toast-warning {
-  background-color: #fffbeb;
+  background-color: var(--color-warning-light);
   border: 1px solid var(--color-warning);
   color: #92400e;
+
+  .toast-icon {
+    color: var(--color-warning);
+  }
 }
 
 .toast-info {
-  background-color: #eff6ff;
-  border: 1px solid var(--color-primary);
+  background-color: var(--color-info-light);
+  border: 1px solid var(--color-info);
   color: #1e40af;
+
+  .toast-icon {
+    color: var(--color-info);
+  }
 }
 
 .toast-icon {
-  font-size: 16px;
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
   flex-shrink: 0;
 }
 
 .toast-message {
   flex: 1;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
   line-height: 1.4;
 }
 
 .toast-dismiss {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  font-size: 14px;
-  opacity: 0.6;
-  transition: opacity 0.2s;
+  width: 28px !important;
+  height: 28px !important;
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity var(--transition-fast) !important;
 
   &:hover {
     opacity: 1;
+  }
+
+  .mat-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
   }
 }

@@ -1,48 +1,68 @@
-<div class="toolbar">
-  <div class="toolbar-group">
+<mat-toolbar class="app-toolbar">
+  <div class="toolbar-brand">
+    <mat-icon class="brand-icon">route</mat-icon>
+    <span class="brand-name">JourneyMap</span>
+  </div>
+
+  <div class="toolbar-center">
+    <div class="toolbar-group">
+      <button
+        mat-icon-button
+        [disabled]="!canUndo()"
+        (click)="undo()"
+        matTooltip="Undo (Ctrl+Z)"
+      >
+        <mat-icon>undo</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        [disabled]="!canRedo()"
+        (click)="redo()"
+        matTooltip="Redo (Ctrl+Shift+Z)"
+      >
+        <mat-icon>redo</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="toolbar-actions">
     <button
-      class="toolbar-btn"
-      [disabled]="!canUndo()"
-      (click)="undo()"
-      title="Undo (Ctrl+Z)"
+      mat-icon-button
+      (click)="onImportJson()"
+      matTooltip="Import JSON"
     >
-      <span class="btn-icon">↩</span>
-      <span class="btn-label">Undo</span>
+      <mat-icon class="material-icons-outlined">folder_open</mat-icon>
     </button>
+
     <button
-      class="toolbar-btn"
-      [disabled]="!canRedo()"
-      (click)="redo()"
-      title="Redo (Ctrl+Shift+Z)"
+      mat-icon-button
+      (click)="onExportJson()"
+      matTooltip="Save as JSON"
     >
-      <span class="btn-icon">↪</span>
-      <span class="btn-label">Redo</span>
+      <mat-icon class="material-icons-outlined">save_alt</mat-icon>
     </button>
+
+    <div class="toolbar-divider"></div>
+
+    <button
+      mat-flat-button
+      color="primary"
+      [matMenuTriggerFor]="exportMenu"
+      class="export-btn"
+    >
+      <mat-icon>download</mat-icon>
+      <span class="export-label">Export</span>
+    </button>
+
+    <mat-menu #exportMenu="matMenu">
+      <button mat-menu-item (click)="onExportPdf()">
+        <mat-icon>picture_as_pdf</mat-icon>
+        <span>Export as PDF</span>
+      </button>
+      <button mat-menu-item (click)="onExportPng()">
+        <mat-icon>image</mat-icon>
+        <span>Export as PNG</span>
+      </button>
+    </mat-menu>
   </div>
-
-  <div class="toolbar-separator"></div>
-
-  <div class="toolbar-group">
-    <button class="toolbar-btn" (click)="onImportJson()" title="Import JSON">
-      <span class="btn-icon">📂</span>
-      <span class="btn-label">Import</span>
-    </button>
-    <button class="toolbar-btn" (click)="onExportJson()" title="Export JSON">
-      <span class="btn-icon">💾</span>
-      <span class="btn-label">Export JSON</span>
-    </button>
-  </div>
-
-  <div class="toolbar-separator"></div>
-
-  <div class="toolbar-group">
-    <button class="toolbar-btn toolbar-btn-primary" (click)="onExportPdf()" title="Export as PDF">
-      <span class="btn-icon">📄</span>
-      <span class="btn-label">PDF</span>
-    </button>
-    <button class="toolbar-btn toolbar-btn-primary" (click)="onExportPng()" title="Export as PNG">
-      <span class="btn-icon">🖼️</span>
-      <span class="btn-label">PNG</span>
-    </button>
-  </div>
-</div>
+</mat-toolbar>

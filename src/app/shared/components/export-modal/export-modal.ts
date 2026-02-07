@@ -1,4 +1,6 @@
 import { Component, output, signal, ChangeDetectionStrategy } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { PaperSize, ExportFormat } from '../../../core/services/export.service';
 
 export interface ExportOptions {
@@ -8,6 +10,7 @@ export interface ExportOptions {
 
 @Component({
   selector: 'app-export-modal',
+  imports: [MatIconModule, MatButtonModule],
   templateUrl: './export-modal.html',
   styleUrl: './export-modal.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

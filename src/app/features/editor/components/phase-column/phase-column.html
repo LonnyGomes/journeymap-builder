@@ -3,11 +3,12 @@
     [phase]="phase()"
     [canRemove]="canRemove()"
     [isLast]="isLast()"
+    [phaseColor]="phaseColor()"
     (nameChange)="nameChange.emit($event)"
     (remove)="remove.emit()"
   />
 
-  <div class="phase-cell">
+  <div class="phase-cell actions-cell">
     <app-editable-cell
       [value]="phase().actions"
       placeholder="What actions does the user take?"
@@ -15,7 +16,7 @@
     />
   </div>
 
-  <div class="phase-cell">
+  <div class="phase-cell mindsets-cell">
     <app-editable-cell
       [value]="phase().mindsets"
       placeholder="What is the user thinking?"
@@ -23,17 +24,24 @@
     />
   </div>
 
+  <!-- Spacer for Emotional Arc row (SVG curve overlay occupies this space) -->
+  <div class="phase-cell emotion-arc-spacer"></div>
+
   <div class="phase-cell emotion-cell">
     <button class="emotion-btn" (click)="showEmotionPicker.emit()">
       @if (phase().emotion) {
         <span class="emotion-display">{{ phase().emotion }}</span>
+        <span class="emotion-label">{{ getEmotionLabel(phase().emotion) }}</span>
       } @else {
-        <span class="emotion-placeholder">Select emotion</span>
+        <span class="emotion-placeholder">
+          <span class="emotion-placeholder-icon">😶</span>
+          <span>Set emotion</span>
+        </span>
       }
     </button>
   </div>
 
-  <div class="phase-cell">
+  <div class="phase-cell opportunities-cell">
     <app-editable-cell
       [value]="phase().opportunities"
       placeholder="What opportunities exist?"

@@ -1,10 +1,10 @@
 <div class="toast-container">
   @for (toast of toasts(); track toast.id) {
     <div class="toast" [class]="'toast-' + toast.type">
-      <span class="toast-icon">{{ getIcon(toast.type) }}</span>
+      <mat-icon class="toast-icon">{{ getIcon(toast.type) }}</mat-icon>
       <span class="toast-message">{{ toast.message }}</span>
-      <button class="toast-dismiss" (click)="dismiss(toast.id)" aria-label="Dismiss">
-        ✕
+      <button mat-icon-button class="toast-dismiss" (click)="dismiss(toast.id)" aria-label="Dismiss">
+        <mat-icon>close</mat-icon>
       </button>
     </div>
   }

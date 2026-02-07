@@ -6,55 +6,79 @@
     (exportPng)="exportPng()"
   />
 
-  <div #exportArea class="export-area">
-    <app-header-section />
+  <div class="editor-body">
+    <div #exportArea class="export-area">
+      <app-header-section />
 
-    <div class="phase-grid-container">
-      <div class="row-labels">
-        <div class="label-header"></div>
-        @for (label of rowLabels; track label) {
-          <div class="row-label">{{ label }}</div>
-        }
-      </div>
-
-      <div class="phases-scroll">
-        <div class="phases-wrapper">
-          @for (phase of phases(); track phase.id; let last = $last) {
-            <app-phase-column
-              [phase]="phase"
-              [canRemove]="canRemovePhase()"
-              [isLast]="last"
-              (nameChange)="updatePhaseName(phase.id, $event)"
-              (actionsChange)="updatePhaseActions(phase.id, $event)"
-              (mindsetsChange)="updatePhaseMindsets(phase.id, $event)"
-              (emotionChange)="selectEmotion($event)"
-              (opportunitiesChange)="updatePhaseOpportunities(phase.id, $event)"
-              (remove)="removePhase(phase.id)"
-              (showEmotionPicker)="showEmotionPicker(phase.id)"
-            />
-          }
-
-          @if (canAddPhase()) {
-            <div class="add-phase-column">
-              <button class="add-phase-btn" (click)="addPhase()">
-                <span class="add-icon">+</span>
-                <span>Add Phase</span>
-              </button>
+      <div class="phase-grid-container">
+        <!-- Row Labels (fixed sidebar) -->
+        <div class="row-labels">
+          <div class="label-header">
+            <span class="label-header-text">Phases</span>
+          </div>
+          @for (row of rowLabels; track row.label) {
+            <div class="row-label" [class.emotion-arc-label]="row.label === 'Emotional Arc'">
+              <mat-icon class="row-label-icon">{{ row.icon }}</mat-icon>
+              <span class="row-label-text">{{ row.label }}</span>
             </div>
           }
+        </div>
+
+        <!-- Scrollable phase columns -->
+        <div class="phases-scroll">
+          <div class="phases-wrapper">
+            @for (phase of phases(); track phase.id; let i = $index; let last = $last) {
+              <div class="phase-track">
+                <app-phase-column
+                  [phase]="phase"
+                  [canRemove]="canRemovePhase()"
+                  [isLast]="last"
+                  [phaseColor]="getPhaseColor(i)"
+                  (nameChange)="updatePhaseName(phase.id, $event)"
+                  (actionsChange)="updatePhaseActions(phase.id, $event)"
+                  (mindsetsChange)="updatePhaseMindsets(phase.id, $event)"
+                  (emotionChange)="selectEmotion($event)"
+                  (opportunitiesChange)="updatePhaseOpportunities(phase.id, $event)"
+                  (remove)="removePhase(phase.id)"
+                  (showEmotionPicker)="showEmotionPicker(phase.id)"
+                />
+              </div>
+            }
+
+            @if (canAddPhase()) {
+              <div class="add-phase-column">
+                <button class="add-phase-btn" (click)="addPhase()" matTooltip="Add a new phase">
+                  <mat-icon>add_circle_outline</mat-icon>
+                  <span class="add-phase-text">Add Phase</span>
+                </button>
+              </div>
+            }
+          </div>
+
+          <!-- Emotion curve overlay spanning all phases -->
+          <div class="emotion-curve-overlay">
+            <app-emotion-curve [phases]="phases()" [columnWidth]="220" />
+          </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Emotion Picker Modal -->
   @if (emotionPickerPhaseId()) {
     <div class="emotion-picker-overlay" (click)="closeEmotionPicker()">
       <div class="emotion-picker" (click)="$event.stopPropagation()">
-        <h3 class="emotion-picker-title">Select Emotion</h3>
+        <div class="emotion-picker-header">
+          <h3 class="emotion-picker-title">How does the user feel?</h3>
+          <button mat-icon-button class="picker-close" (click)="closeEmotionPicker()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
         <div class="emotion-grid">
           @for (option of emotionOptions; track option.emoji) {
             <button
               class="emotion-option"
+              [class.selected]="currentPhaseEmotion() === option.emoji"
               (click)="selectEmotion(option.emoji)"
               [title]="option.label"
             >
@@ -63,7 +87,10 @@
             </button>
           }
         </div>
-        <button class="clear-emotion-btn" (click)="selectEmotion(null)">Clear Selection</button>
+        <button class="clear-emotion-btn" (click)="selectEmotion(null)">
+          <mat-icon>remove_circle_outline</mat-icon>
+          <span>Clear selection</span>
+        </button>
       </div>
     </div>
   }

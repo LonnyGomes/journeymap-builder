@@ -2,11 +2,15 @@ import {
   Component,
   inject,
   signal,
+  computed,
   ChangeDetectionStrategy,
   HostListener,
   ElementRef,
   viewChild,
 } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { JourneyMapStore } from '../../core/services/journey-map.store';
 import { ExportService } from '../../core/services/export.service';
 import { ImportService } from '../../core/services/import.service';
@@ -14,11 +18,34 @@ import { EmotionEmoji, EMOTION_OPTIONS } from '../../models/journey-map.model';
 import { Toolbar } from './components/toolbar/toolbar';
 import { HeaderSection } from './components/header-section/header-section';
 import { PhaseColumn } from './components/phase-column/phase-column';
+import { EmotionCurve } from './components/emotion-curve/emotion-curve';
 import { ExportModal, ExportOptions } from '../../shared/components/export-modal/export-modal';
+
+const PHASE_COLORS = [
+  'var(--phase-color-1)',
+  'var(--phase-color-2)',
+  'var(--phase-color-3)',
+  'var(--phase-color-4)',
+  'var(--phase-color-5)',
+  'var(--phase-color-6)',
+  'var(--phase-color-7)',
+  'var(--phase-color-8)',
+  'var(--phase-color-9)',
+  'var(--phase-color-10)',
+];
 
 @Component({
   selector: 'app-journey-map-editor',
-  imports: [Toolbar, HeaderSection, PhaseColumn, ExportModal],
+  imports: [
+    Toolbar,
+    HeaderSection,
+    PhaseColumn,
+    EmotionCurve,
+    ExportModal,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+  ],
   templateUrl: './journey-map-editor.html',
   styleUrl: './journey-map-editor.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,7 +64,20 @@ export class JourneyMapEditor {
   protected readonly showExportModal = signal(false);
   protected readonly emotionOptions = EMOTION_OPTIONS;
 
-  protected readonly rowLabels = ['Actions', 'Mindsets', 'Emotions', 'Opportunities'];
+  protected readonly rowLabels = [
+    { label: 'Actions', icon: 'touch_app' },
+    { label: 'Mindsets', icon: 'psychology' },
+    { label: 'Emotional Arc', icon: 'mood' },
+    { label: 'Emotions', icon: 'sentiment_satisfied' },
+    { label: 'Opportunities', icon: 'lightbulb' },
+  ];
+
+  protected readonly currentPhaseEmotion = computed(() => {
+    const phaseId = this.emotionPickerPhaseId();
+    if (!phaseId) return null;
+    const phase = this.phases().find((p) => p.id === phaseId);
+    return phase?.emotion ?? null;
+  });
 
   private readonly exportAreaRef = viewChild<ElementRef<HTMLElement>>('exportArea');
 
@@ -51,6 +91,10 @@ export class JourneyMapEditor {
         this.store.undo();
       }
     }
+  }
+
+  protected getPhaseColor(index: number): string {
+    return PHASE_COLORS[index % PHASE_COLORS.length];
   }
 
   protected addPhase(): void {
@@ -137,4 +181,5 @@ export class JourneyMapEditor {
     const map = this.store.getMapForExport();
     this.exportService.exportPng(exportArea, map);
   }
+
 }

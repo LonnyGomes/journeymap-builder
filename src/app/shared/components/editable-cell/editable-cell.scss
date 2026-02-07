@@ -6,41 +6,44 @@
 
 .edit-textarea {
   width: 100%;
-  min-height: 60px;
-  padding: 8px;
-  border: 2px solid var(--color-primary);
-  border-radius: 4px;
+  min-height: 56px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-sm);
   font-family: inherit;
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.6;
   resize: vertical;
   outline: none;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-surface);
+  transition: box-shadow var(--transition-fast);
 
   &:focus {
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
   }
 }
 
 .display-content {
-  min-height: 60px;
-  padding: 8px;
-  border: 1px dashed transparent;
-  border-radius: 4px;
+  min-height: 40px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--transition-fast);
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
 
   &:hover {
-    background-color: var(--color-bg-light);
+    background-color: var(--color-bg-hover);
     border-color: var(--color-border);
   }
 
-  &:focus {
+  &:focus-visible {
     outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
+    outline-offset: 1px;
   }
 
   &.has-content {
@@ -49,10 +52,11 @@
 }
 
 .content-text {
-  color: #1f2937;
+  color: var(--color-text-primary);
 }
 
 .placeholder-text {
-  color: #9ca3af;
-  font-style: italic;
+  color: var(--color-text-placeholder);
+  font-style: normal;
+  font-weight: 400;
 }

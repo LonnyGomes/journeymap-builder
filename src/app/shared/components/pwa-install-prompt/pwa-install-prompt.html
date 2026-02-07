@@ -1,15 +1,17 @@
 @if (canInstall() && !dismissed()) {
   <div class="install-prompt">
     <div class="install-content">
-      <span class="install-icon">📱</span>
+      <div class="install-icon-wrapper">
+        <mat-icon>install_mobile</mat-icon>
+      </div>
       <div class="install-text">
         <strong>Install Journey Map Builder</strong>
         <span>Get the full app experience with offline support</span>
       </div>
     </div>
     <div class="install-actions">
-      <button class="btn-dismiss" (click)="dismiss()">Not now</button>
-      <button class="btn-install" (click)="install()">Install</button>
+      <button mat-stroked-button class="btn-dismiss" (click)="dismiss()">Not now</button>
+      <button mat-flat-button color="primary" class="btn-install" (click)="install()">Install</button>
     </div>
   </div>
 }

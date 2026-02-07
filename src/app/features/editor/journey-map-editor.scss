@@ -2,64 +2,100 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  height: 100dvh; // Dynamic viewport height for mobile
-  background-color: #f9fafb;
+  height: 100dvh;
+  background-color: var(--color-bg-page);
+}
+
+.editor-body {
+  flex: 1;
+  overflow: auto;
 }
 
 .export-area {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  background-color: white;
+  min-height: 100%;
+  background-color: var(--color-bg-surface);
 }
 
+// ---- Phase Grid ----
 .phase-grid-container {
   flex: 1;
   display: flex;
   overflow: hidden;
   position: relative;
+  border-top: 1px solid var(--color-border);
 }
 
 .row-labels {
   display: flex;
   flex-direction: column;
-  width: 120px;
+  width: 140px;
   flex-shrink: 0;
-  background-color: white;
+  background-color: var(--color-bg-surface);
   border-right: 1px solid var(--color-border);
   z-index: 10;
 
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
+    width: 100px;
+  }
+
+  @media (max-width: 480px) {
     width: 80px;
   }
 }
 
 .label-header {
-  height: 56px;
-  border-bottom: 2px solid var(--color-primary);
-  background-color: #f3f4f6;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background-color: var(--color-bg-subtle);
+  border-bottom: 1px solid var(--color-border);
+
+  @media (max-width: 480px) {
+    padding: 0 8px;
+  }
+}
+
+.label-header-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+
+  @media (max-width: 480px) {
+    font-size: 10px;
+  }
 }
 
 .row-label {
   display: flex;
   align-items: center;
+  gap: 8px;
   padding: 0 16px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--color-border);
   min-height: 100px;
+  border-bottom: 1px solid var(--color-divider);
 
-  @media (max-width: 640px) {
-    padding: 0 8px;
-    font-size: 11px;
+  @media (max-width: 768px) {
+    padding: 0 10px;
+    gap: 6px;
     min-height: 80px;
   }
 
-  &:nth-child(4) {
+  @media (max-width: 480px) {
+    padding: 0 8px;
+    gap: 4px;
+  }
+
+  // Emotional Arc row height
+  &.emotion-arc-label {
+    min-height: 160px;
+  }
+
+  // Emotions row (individual per-phase pickers)
+  &:nth-child(5) {
     min-height: 80px;
 
     @media (max-width: 640px) {
@@ -72,27 +108,55 @@
   }
 }
 
+.row-label-icon {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+
+  @media (max-width: 480px) {
+    font-size: 14px !important;
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
+
+.row-label-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+
+  @media (max-width: 480px) {
+    font-size: 9px;
+  }
+}
+
+// ---- Phases Scroll Area ----
 .phases-scroll {
   flex: 1;
   overflow-x: auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  position: relative;
 
-  // Custom scrollbar for horizontal scroll
   &::-webkit-scrollbar {
-    height: 12px;
+    height: 8px;
   }
 
   &::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--color-bg-subtle);
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 6px;
+    background: var(--color-border-strong);
+    border-radius: 4px;
 
     &:hover {
-      background: #a1a1a1;
+      background: var(--color-text-muted);
     }
   }
 }
@@ -102,16 +166,29 @@
   min-width: max-content;
 }
 
+.phase-track {
+  display: flex;
+  flex-direction: column;
+}
+
+// ---- Emotion Curve Overlay ----
+.emotion-curve-overlay {
+  position: absolute;
+  // Position it in the "Emotional Arc" row
+  // Header: 52px, Actions: 100px, Mindsets: 100px = 252px top
+  top: 252px;
+  left: 0;
+  height: 160px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+// ---- Add Phase Column ----
 .add-phase-column {
   display: flex;
   align-items: flex-start;
   padding: 12px;
-  min-width: 140px;
-
-  @media (max-width: 640px) {
-    min-width: 100px;
-    padding: 8px;
-  }
+  min-width: 120px;
 }
 
 .add-phase-btn {
@@ -121,54 +198,63 @@
   gap: 8px;
   padding: 16px 24px;
   border: 2px dashed var(--color-border);
-  border-radius: 8px;
-  background-color: white;
-  color: #6b7280;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-muted);
   cursor: pointer;
-  transition: all 0.15s;
-  font-size: 13px;
+  transition: all var(--transition-base);
+  font-size: 12px;
   font-weight: 500;
+  font-family: inherit;
+  margin-top: 0;
+
+  .mat-icon {
+    font-size: 24px !important;
+    width: 24px !important;
+    height: 24px !important;
+    color: var(--color-text-muted);
+    transition: color var(--transition-base);
+  }
 
   @media (max-width: 640px) {
     padding: 12px 16px;
-    font-size: 12px;
   }
 
   &:hover {
     border-color: var(--color-primary);
     color: var(--color-primary);
-    background-color: #eff6ff;
+    background-color: var(--color-primary-50);
+
+    .mat-icon {
+      color: var(--color-primary);
+    }
   }
 
-  &:focus {
+  &:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
 }
 
-.add-icon {
-  font-size: 24px;
-  font-weight: 300;
-
-  @media (max-width: 640px) {
-    font-size: 20px;
-  }
+.add-phase-text {
+  white-space: nowrap;
 }
 
-// Emotion Picker Modal
+// ---- Emotion Picker Modal ----
 .emotion-picker-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
   padding: 20px;
-  animation: fadeIn 0.2s ease;
+  animation: overlayFadeIn 0.15s ease;
 }
 
-@keyframes fadeIn {
+@keyframes overlayFadeIn {
   from {
     opacity: 0;
   }
@@ -178,43 +264,60 @@
 }
 
 .emotion-picker {
-  background-color: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-overlay);
+  max-width: 420px;
   width: 100%;
-  animation: scaleIn 0.2s ease;
+  animation: pickerSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
 
   @media (max-width: 480px) {
-    padding: 16px;
+    max-width: 100%;
+    border-radius: var(--radius-lg);
   }
 }
 
-@keyframes scaleIn {
+@keyframes pickerSlideIn {
   from {
-    transform: scale(0.95);
+    transform: translateY(8px) scale(0.98);
     opacity: 0;
   }
   to {
-    transform: scale(1);
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
 
+.emotion-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 0;
+}
+
 .emotion-picker-title {
-  margin: 0 0 16px 0;
-  font-size: 18px;
+  margin: 0;
+  font-size: 16px;
   font-weight: 600;
-  color: #1f2937;
-  text-align: center;
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.picker-close {
+  .mat-icon {
+    font-size: 18px !important;
+    width: 18px !important;
+    height: 18px !important;
+    color: var(--color-text-muted);
+  }
 }
 
 .emotion-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 6px;
+  padding: 16px 20px;
 
   @media (max-width: 400px) {
     grid-template-columns: repeat(4, 1fr);
@@ -225,32 +328,40 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 12px 8px;
+  gap: 3px;
+  padding: 10px 6px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background-color: white;
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-surface);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all var(--transition-fast);
+  font-family: inherit;
 
   &:hover {
-    background-color: #eff6ff;
+    background-color: var(--color-primary-50);
     border-color: var(--color-primary);
-    transform: scale(1.05);
+    transform: translateY(-1px);
   }
 
-  &:focus {
+  &:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
 
   &:active {
-    transform: scale(0.98);
+    transform: translateY(0);
+  }
+
+  &.selected {
+    background-color: var(--color-primary-light);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 1px var(--color-primary);
   }
 }
 
 .option-emoji {
-  font-size: 24px;
+  font-size: 22px;
+  line-height: 1;
 
   @media (max-width: 400px) {
     font-size: 20px;
@@ -258,34 +369,38 @@
 }
 
 .option-label {
-  font-size: 10px;
-  color: #6b7280;
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--color-text-muted);
   text-align: center;
-
-  @media (max-width: 400px) {
-    font-size: 9px;
-  }
+  line-height: 1.2;
 }
 
 .clear-emotion-btn {
   width: 100%;
-  padding: 10px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  background-color: white;
-  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  border: none;
+  border-top: 1px solid var(--color-divider);
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
   cursor: pointer;
   font-size: 13px;
-  transition: all 0.15s;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  font-family: inherit;
 
-  &:hover {
-    background-color: #fef2f2;
-    border-color: var(--color-error);
-    color: var(--color-error);
+  .mat-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
   }
 
-  &:focus {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
+  &:hover {
+    background-color: var(--color-error-light);
+    color: var(--color-error);
   }
 }
