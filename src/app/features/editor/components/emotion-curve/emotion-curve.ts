@@ -18,12 +18,17 @@ interface CurvePoint {
 export class EmotionCurve {
   readonly phases = input.required<JourneyPhase[]>();
   readonly columnWidth = input<number>(220);
+  readonly curveWidth = input<number | null>(null);
+  readonly phaseCenters = input<number[] | null>(null);
 
-  private readonly SVG_PADDING_X = 40;
   private readonly SVG_PADDING_TOP = 28;
   private readonly SVG_PADDING_BOTTOM = 28;
 
   protected readonly svgWidth = computed(() => {
+    const measuredWidth = this.curveWidth();
+    if (measuredWidth !== null && measuredWidth > 0) {
+      return measuredWidth;
+    }
     return this.phases().length * this.columnWidth();
   });
 
@@ -32,6 +37,7 @@ export class EmotionCurve {
   protected readonly points = computed<CurvePoint[]>(() => {
     const phases = this.phases();
     const colW = this.columnWidth();
+    const centers = this.phaseCenters();
     const usableHeight = this.svgHeight - this.SVG_PADDING_TOP - this.SVG_PADDING_BOTTOM;
     const result: CurvePoint[] = [];
 
@@ -41,7 +47,7 @@ export class EmotionCurve {
       if (level === null) continue;
 
       result.push({
-        x: i * colW + colW / 2,
+        x: centers?.[i] ?? i * colW + colW / 2,
         y: this.SVG_PADDING_TOP + usableHeight - (level / 9) * usableHeight,
         emoji: phase.emotion as string,
         label: getEmotionLabel(phase.emotion),

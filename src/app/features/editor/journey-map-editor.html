@@ -46,9 +46,9 @@
             </div>
 
             <div class="phases-scroll">
-              <div class="phases-wrapper">
+              <div class="phases-wrapper" #phasesWrapper>
                 @for (phase of phases(); track phase.id; let i = $index; let last = $last) {
-                  <div class="phase-track">
+                  <div class="phase-track" #phaseTrack>
                     <app-phase-column
                       [phase]="phase"
                       [canRemove]="canRemovePhase()"
@@ -75,8 +75,13 @@
                 }
               </div>
 
-              <div class="emotion-curve-overlay">
-                <app-emotion-curve [phases]="phases()" [columnWidth]="220" />
+              <div class="emotion-curve-overlay" [style.width.px]="emotionCurveWidth()">
+                <app-emotion-curve
+                  [phases]="phases()"
+                  [columnWidth]="phaseColumnWidth()"
+                  [curveWidth]="emotionCurveWidth()"
+                  [phaseCenters]="phaseCenters()"
+                />
               </div>
             </div>
           </div>

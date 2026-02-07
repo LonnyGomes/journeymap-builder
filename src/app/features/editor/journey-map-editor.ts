@@ -7,6 +7,9 @@ import {
   HostListener,
   ElementRef,
   viewChild,
+  viewChildren,
+  effect,
+  OnDestroy,
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -50,7 +53,7 @@ const PHASE_COLORS = [
   styleUrl: './journey-map-editor.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class JourneyMapEditor {
+export class JourneyMapEditor implements OnDestroy {
   private store = inject(JourneyMapStore);
   private exportService = inject(ExportService);
   private importService = inject(ImportService);
@@ -63,6 +66,19 @@ export class JourneyMapEditor {
   protected readonly emotionPickerPhaseId = signal<string | null>(null);
   protected readonly showExportModal = signal(false);
   protected readonly emotionOptions = EMOTION_OPTIONS;
+  private readonly viewportWidth = signal(
+    typeof window !== 'undefined' ? window.innerWidth : 1280,
+  );
+  protected readonly phaseColumnWidth = computed(() =>
+    this.viewportWidth() <= 640 ? 180 : 220,
+  );
+  protected readonly phaseCenters = signal<number[]>([]);
+  private readonly measuredEmotionCurveWidth = signal<number | null>(null);
+  protected readonly emotionCurveWidth = computed(() => {
+    const measured = this.measuredEmotionCurveWidth();
+    if (measured !== null && measured > 0) return measured;
+    return this.phases().length * this.phaseColumnWidth();
+  });
 
   protected readonly rowLabels = [
     { label: 'Actions', icon: 'touch_app' },
@@ -80,6 +96,33 @@ export class JourneyMapEditor {
   });
 
   private readonly exportAreaRef = viewChild<ElementRef<HTMLElement>>('exportArea');
+  private readonly phaseTrackRefs = viewChildren<ElementRef<HTMLElement>>('phaseTrack');
+  private readonly phasesWrapperRef = viewChild<ElementRef<HTMLElement>>('phasesWrapper');
+  private readonly resizeObserver =
+    typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(() => this.updateEmotionCurveLayout())
+      : null;
+
+  private readonly layoutSyncEffect = effect((onCleanup) => {
+    const wrapper = this.phasesWrapperRef()?.nativeElement ?? null;
+    const tracks = this.phaseTrackRefs().map((ref) => ref.nativeElement);
+
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      if (wrapper) this.resizeObserver.observe(wrapper);
+      for (const track of tracks) {
+        this.resizeObserver.observe(track);
+      }
+    }
+
+    // Measure after the DOM paint that reflects current signals.
+    const frameId = requestAnimationFrame(() => this.updateEmotionCurveLayout());
+    onCleanup(() => cancelAnimationFrame(frameId));
+  });
+
+  ngOnDestroy(): void {
+    this.resizeObserver?.disconnect();
+  }
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardShortcuts(event: KeyboardEvent): void {
@@ -91,6 +134,14 @@ export class JourneyMapEditor {
         this.store.undo();
       }
     }
+  }
+
+  @HostListener('window:resize')
+  handleWindowResize(): void {
+    if (typeof window !== 'undefined') {
+      this.viewportWidth.set(window.innerWidth);
+    }
+    this.updateEmotionCurveLayout();
   }
 
   protected getPhaseColor(index: number): string {
@@ -180,6 +231,27 @@ export class JourneyMapEditor {
     if (!exportArea) return;
     const map = this.store.getMapForExport();
     this.exportService.exportPng(exportArea, map);
+  }
+
+  private updateEmotionCurveLayout(): void {
+    const tracks = this.phaseTrackRefs().map((ref) => ref.nativeElement);
+    const wrapper = this.phasesWrapperRef()?.nativeElement;
+    if (!wrapper || tracks.length === 0) {
+      this.phaseCenters.set([]);
+      this.measuredEmotionCurveWidth.set(null);
+      return;
+    }
+
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const centers = tracks.map((track) => {
+      const rect = track.getBoundingClientRect();
+      return rect.left - wrapperRect.left + rect.width / 2;
+    });
+
+    const rightEdge = tracks[tracks.length - 1].getBoundingClientRect().right - wrapperRect.left;
+
+    this.phaseCenters.set(centers);
+    this.measuredEmotionCurveWidth.set(rightEdge);
   }
 
 }
