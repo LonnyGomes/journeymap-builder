@@ -55,8 +55,87 @@
   color: var(--color-text-primary);
 }
 
+
+.markdown-content {
+  white-space: normal;
+
+  :first-child {
+    margin-top: 0;
+  }
+
+  :last-child {
+    margin-bottom: 0;
+  }
+
+  p,
+  ul,
+  ol,
+  blockquote,
+  pre,
+  table {
+    margin: 0 0 8px;
+  }
+
+  p {
+    padding: 0;
+    margin: 0 0 4px;
+  }
+
+  li > p {
+    margin: 0;
+    padding: 0;
+  }
+
+  ul,
+  ol {
+    padding-left: 20px;
+    margin: 0 0 4px;
+  }
+
+
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+    font-size: 12px;
+    background-color: rgba(15, 118, 110, 0.1);
+    border-radius: 4px;
+    padding: 1px 4px;
+  }
+}
+
 .placeholder-text {
   color: var(--color-text-placeholder);
   font-style: normal;
   font-weight: 400;
+}
+
+::ng-deep {
+  .markdown-content {
+    p {
+      margin: 0;
+      padding: 0;
+    }
+
+    ul,
+    ol {
+      list-style: square;
+      padding-left: 20px;
+      margin: 0;
+    }
+
+    li {
+      padding: 0;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    li > p {
+      margin: 0;
+      padding: 0;
+    }
+  }
 }

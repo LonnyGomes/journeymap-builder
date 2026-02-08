@@ -11,6 +11,7 @@
   <div class="phase-cell actions-cell">
     <app-editable-cell
       [value]="phase().actions"
+      [renderMarkdown]="true"
       placeholder="What actions does the user take?"
       (valueChange)="actionsChange.emit($event)"
     />
@@ -19,6 +20,7 @@
   <div class="phase-cell mindsets-cell">
     <app-editable-cell
       [value]="phase().mindsets"
+      [renderMarkdown]="true"
       placeholder="What is the user thinking?"
       (valueChange)="mindsetsChange.emit($event)"
     />
@@ -44,6 +46,7 @@
   <div class="phase-cell opportunities-cell">
     <app-editable-cell
       [value]="phase().opportunities"
+      [renderMarkdown]="true"
       placeholder="What opportunities exist?"
       (valueChange)="opportunitiesChange.emit($event)"
     />

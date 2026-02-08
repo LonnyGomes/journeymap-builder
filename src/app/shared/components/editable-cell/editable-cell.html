@@ -18,7 +18,11 @@
     role="button"
   >
     @if (value()) {
-      <span class="content-text">{{ value() }}</span>
+      @if (renderMarkdown()) {
+        <div class="content-text markdown-content" [innerHTML]="renderedValue()"></div>
+      } @else {
+        <span class="content-text">{{ value() }}</span>
+      }
     } @else {
       <span class="placeholder-text">{{ placeholder() }}</span>
     }

@@ -35,6 +35,7 @@
           <label class="field-label">Description</label>
           <app-editable-cell
             [value]="map().actor.description"
+            [renderMarkdown]="true"
             placeholder="Describe the persona..."
             (valueChange)="updateActorDescription($event)"
           />
@@ -82,6 +83,7 @@
       <div class="card-body">
         <app-editable-cell
           [value]="map().scenario"
+          [renderMarkdown]="true"
           placeholder="Describe the scenario or situation the user encounters..."
           [minRows]="4"
           (valueChange)="updateScenario($event)"
@@ -100,6 +102,7 @@
       <div class="card-body">
         <app-editable-cell
           [value]="map().expectations"
+          [renderMarkdown]="true"
           placeholder="What does the user expect from this journey?"
           [minRows]="4"
           (valueChange)="updateExpectations($event)"
