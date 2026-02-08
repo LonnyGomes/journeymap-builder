@@ -138,9 +138,10 @@
 .export-area.export-mode {
   min-height: auto;
   background-color: #fff;
-  border: none;
-  border-radius: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
   box-shadow: none;
+  background-clip: padding-box;
 
   * {
     animation: none !important;
@@ -155,24 +156,41 @@
   }
 
   .phases-scroll {
-    flex: 1 1 auto;
-    width: auto;
+    flex: 1 1 0;
+    width: 100%;
+    min-width: 0;
     overflow: visible !important;
   }
 
   .phases-wrapper {
+    display: grid !important;
+    grid-template-columns: repeat(var(--export-phase-count, 1), minmax(0, 1fr));
+    gap: 0;
     width: 100%;
     min-width: 0;
   }
 
   .phase-track {
     flex: 1 1 0;
-    min-width: 0;
+    min-width: 0 !important;
+    box-sizing: border-box;
+    background-color: #fff;
+  }
+
+  app-phase-column {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
   }
 
   .phase-column {
-    min-width: 0;
-    width: 100%;
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  .row-labels {
+    position: static;
   }
 
   .emotion-curve-overlay {
@@ -193,6 +211,23 @@
 
   .export-static-input[data-export-empty='true'] {
     color: var(--color-text-placeholder) !important;
+  }
+
+  .phase-header {
+    align-items: center;
+  }
+
+  .phase-header .phase-name-input.export-static-input {
+    flex: 1 1 auto;
+    width: auto !important;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    line-height: 1.25;
+    display: flex !important;
+    align-items: center !important;
+    min-height: 0 !important;
+    height: auto !important;
   }
 
   .add-phase-column {

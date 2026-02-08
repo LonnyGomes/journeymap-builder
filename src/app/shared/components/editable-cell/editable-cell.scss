@@ -86,7 +86,11 @@
     padding: 0;
   }
 
-  ul,
+  ul {
+    padding-left: 16px;
+    margin: 0 0 4px;
+  }
+
   ol {
     padding-left: 20px;
     margin: 0 0 4px;
@@ -120,14 +124,37 @@
       padding: 0;
     }
 
-    ul,
+    ul {
+      list-style: none;
+      padding-left: 16px;
+      margin: 0;
+    }
+
     ol {
-      list-style: square;
+      list-style: decimal;
       padding-left: 20px;
       margin: 0;
     }
 
-    li {
+    ul > li {
+      position: relative;
+      padding: 0 0 0 2px;
+      margin: 0;
+      line-height: 1.5;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: -10px;
+        top: 0.6em;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: #334e68;
+      }
+    }
+
+    ol > li {
       padding: 0;
       margin: 0;
       line-height: 1.5;
