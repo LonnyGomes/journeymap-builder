@@ -1,5 +1,5 @@
 .header-section {
-  padding: 28px clamp(14px, 2vw, 28px) 20px;
+  padding: 12px clamp(14px, 2vw, 28px) 10px;
   background:
     radial-gradient(circle at 98% 0%, rgba(15, 118, 110, 0.09), transparent 28%),
     linear-gradient(180deg, #ffffff 0%, #f8fbfd 100%);
@@ -7,17 +7,17 @@
 }
 
 .title-row {
-  margin-bottom: 20px;
+  margin-bottom: 8px;
 }
 
 .title-input {
   width: 100%;
-  font-size: clamp(28px, 2.4vw, 36px);
+  font-size: clamp(20px, 2vw, 26px);
   font-weight: 800;
   color: var(--color-text-primary);
   border: none;
   border-bottom: 2px solid transparent;
-  padding: 4px 0 8px;
+  padding: 2px 0 4px;
   outline: none;
   background: transparent;
   font-family: inherit;
@@ -53,53 +53,34 @@
 }
 
 .meta-card {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  padding: 6px 10px;
+  border-left: 3px solid var(--color-border);
   overflow: hidden;
-  box-shadow: var(--shadow-xs);
-  transition: box-shadow var(--transition-base), transform var(--transition-base);
+  transition: border-color var(--transition-base);
 
-  &:hover {
-    box-shadow: var(--shadow-sm);
-    transform: translateY(-1px);
+  &.actor-card {
+    border-left-color: var(--color-primary);
+  }
+
+  &:nth-child(2) {
+    border-left-color: #2a6f97;
+  }
+
+  &:nth-child(3) {
+    border-left-color: #2c9867;
   }
 }
 
 .card-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 16px 0;
+  gap: 6px;
+  padding: 0;
+  margin-bottom: 2px;
 }
 
 .card-icon-wrapper {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  .mat-icon {
-    font-size: 17px;
-    width: 17px;
-    height: 17px;
-    color: white;
-  }
-}
-
-.actor-icon {
-  background-color: var(--color-primary);
-}
-
-.scenario-icon {
-  background-color: #2a6f97;
-}
-
-.expectations-icon {
-  background-color: #2c9867;
+  display: none;
 }
 
 .card-title {
@@ -112,11 +93,11 @@
 }
 
 .card-body {
-  padding: 12px 16px 16px;
+  padding: 0;
 }
 
 .meta-field {
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 
   &:last-child {
     margin-bottom: 0;
@@ -135,7 +116,8 @@
 
 .goals-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 5px;
 }
 
@@ -143,7 +125,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 4px 3px 8px;
+  padding: 2px 4px 2px 6px;
   background-color: var(--color-bg-subtle);
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);

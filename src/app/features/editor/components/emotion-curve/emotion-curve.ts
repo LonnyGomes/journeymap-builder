@@ -21,8 +21,8 @@ export class EmotionCurve {
   readonly curveWidth = input<number | null>(null);
   readonly phaseCenters = input<number[] | null>(null);
 
-  private readonly SVG_PADDING_TOP = 28;
-  private readonly SVG_PADDING_BOTTOM = 28;
+  private readonly SVG_PADDING_TOP = 18;
+  private readonly SVG_PADDING_BOTTOM = 18;
 
   protected readonly svgWidth = computed(() => {
     const measuredWidth = this.curveWidth();
@@ -32,7 +32,7 @@ export class EmotionCurve {
     return this.phases().length * this.columnWidth();
   });
 
-  protected readonly svgHeight = 160;
+  protected readonly svgHeight = 100;
 
   protected readonly points = computed<CurvePoint[]>(() => {
     const phases = this.phases();

@@ -2,21 +2,21 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px;
+  padding: 6px 10px;
   background: linear-gradient(180deg, #f7fbfd 0%, #f2f8fb 100%);
   border-top: 3px solid var(--color-primary);
-  min-height: 52px;
+  min-height: 36px;
 }
 
 .phase-number {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   flex-shrink: 0;
   letter-spacing: -0.01em;

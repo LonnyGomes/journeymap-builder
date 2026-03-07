@@ -396,8 +396,8 @@ export class ExportService {
       if (!value) continue;
 
       const computed = view?.getComputedStyle(badge);
-      const width = Math.max(parseFloat(computed?.width ?? '0'), badge.clientWidth || 22);
-      const height = Math.max(parseFloat(computed?.height ?? '0'), badge.clientHeight || 22);
+      const width = Math.max(parseFloat(computed?.width ?? '0'), badge.clientWidth || 18);
+      const height = Math.max(parseFloat(computed?.height ?? '0'), badge.clientHeight || 18);
       const backgroundColor = computed?.backgroundColor || '#2563eb';
       const textColor = computed?.color || '#ffffff';
       const fontSize = computed?.fontSize || '11px';
@@ -562,15 +562,15 @@ export class ExportService {
     overlay.style.left = '0';
     overlay.style.right = 'auto';
 
-    const svgHeight = sourceSvg ? this.getViewBoxSize(sourceSvg).height : 160;
+    const svgHeight = sourceSvg ? this.getViewBoxSize(sourceSvg).height : 100;
 
     // Calculate phase centers based on equal grid columns
     const phaseCenters = tracks.map((_, index) => {
       return columnWidth * index + columnWidth / 2;
     });
 
-    const svgPaddingTop = 28;
-    const svgPaddingBottom = 28;
+    const svgPaddingTop = 18;
+    const svgPaddingBottom = 18;
     const usableHeight = svgHeight - svgPaddingTop - svgPaddingBottom;
 
     const phasesById = new Map(map.phases.map((phase) => [phase.id, phase]));
@@ -674,10 +674,10 @@ export class ExportService {
     }
 
     const width = Number(svg.getAttribute('width') ?? svg.clientWidth ?? 1);
-    const height = Number(svg.getAttribute('height') ?? svg.clientHeight ?? 160);
+    const height = Number(svg.getAttribute('height') ?? svg.clientHeight ?? 100);
     return {
       width: Number.isFinite(width) && width > 0 ? width : 1,
-      height: Number.isFinite(height) && height > 0 ? height : 160,
+      height: Number.isFinite(height) && height > 0 ? height : 100,
     };
   }
 
@@ -761,7 +761,7 @@ export class ExportService {
     defs.appendChild(areaGradient);
     svg.appendChild(defs);
 
-    const yLines = [28, 80, 132];
+    const yLines = [18, 50, 82];
     for (const y of yLines) {
       const line = doc.createElementNS(ns, 'line');
       line.setAttribute('x1', '0');
@@ -801,7 +801,7 @@ export class ExportService {
       const glow = doc.createElementNS(ns, 'circle');
       glow.setAttribute('cx', `${point.x}`);
       glow.setAttribute('cy', `${point.y}`);
-      glow.setAttribute('r', '16');
+      glow.setAttribute('r', '12');
       glow.setAttribute('fill', color);
       glow.setAttribute('opacity', '0.1');
       glow.setAttribute('class', 'point-glow');
@@ -810,7 +810,7 @@ export class ExportService {
       const circle = doc.createElementNS(ns, 'circle');
       circle.setAttribute('cx', `${point.x}`);
       circle.setAttribute('cy', `${point.y}`);
-      circle.setAttribute('r', '10');
+      circle.setAttribute('r', '8');
       circle.setAttribute('fill', 'white');
       circle.setAttribute('stroke', color);
       circle.setAttribute('stroke-width', '2');
@@ -823,7 +823,7 @@ export class ExportService {
       text.setAttribute('y', `${point.y + 1}`);
       text.setAttribute('text-anchor', 'middle');
       text.setAttribute('dominant-baseline', 'central');
-      text.setAttribute('font-size', '12');
+      text.setAttribute('font-size', '10');
       text.setAttribute('class', 'point-emoji');
       text.textContent = point.emoji;
       svg.appendChild(text);

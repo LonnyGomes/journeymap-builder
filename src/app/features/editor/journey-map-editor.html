@@ -48,7 +48,7 @@
             <div class="phases-scroll">
               <div class="phases-wrapper" #phasesWrapper>
                 @for (phase of phases(); track phase.id; let i = $index; let last = $last) {
-                  <div class="phase-track" #phaseTrack>
+                  <div class="phase-track" #phaseTrack [attr.data-phase-id]="phase.id">
                     <app-phase-column
                       [phase]="phase"
                       [canRemove]="canRemovePhase()"
