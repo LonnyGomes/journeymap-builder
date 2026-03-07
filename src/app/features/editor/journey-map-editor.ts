@@ -116,7 +116,10 @@ export class JourneyMapEditor implements OnDestroy {
     }
 
     // Measure after the DOM paint that reflects current signals.
-    const frameId = requestAnimationFrame(() => this.updateEmotionCurveLayout());
+    const frameId = requestAnimationFrame(() => {
+      this.updateEmotionCurveLayout();
+      this.syncRowLabelHeights();
+    });
     onCleanup(() => cancelAnimationFrame(frameId));
   });
 
@@ -142,6 +145,7 @@ export class JourneyMapEditor implements OnDestroy {
       this.viewportWidth.set(window.innerWidth);
     }
     this.updateEmotionCurveLayout();
+    this.syncRowLabelHeights();
   }
 
   protected getPhaseColor(index: number): string {
@@ -231,6 +235,34 @@ export class JourneyMapEditor implements OnDestroy {
     if (!exportArea) return;
     const map = this.store.getMapForExport();
     this.exportService.exportPng(exportArea, map);
+  }
+
+  private syncRowLabelHeights(): void {
+    const exportArea = this.exportAreaRef()?.nativeElement;
+    if (!exportArea) return;
+
+    const labelHeader = exportArea.querySelector('.label-header') as HTMLElement | null;
+    const rowLabelEls = Array.from(
+      exportArea.querySelectorAll('.row-label'),
+    ) as HTMLElement[];
+
+    // Get the first phase column to read row heights from the grid
+    const firstColumn = exportArea.querySelector('.phase-column') as HTMLElement | null;
+    if (!firstColumn) return;
+
+    const phaseHeader = firstColumn.querySelector('.phase-header') as HTMLElement | null;
+    const phaseCells = Array.from(firstColumn.querySelectorAll('.phase-cell')) as HTMLElement[];
+
+    // Sync header height
+    if (labelHeader && phaseHeader) {
+      labelHeader.style.height = `${phaseHeader.offsetHeight}px`;
+    }
+
+    // Sync each row-label to corresponding phase-cell
+    for (let i = 0; i < rowLabelEls.length && i < phaseCells.length; i++) {
+      rowLabelEls[i].style.height = `${phaseCells[i].offsetHeight}px`;
+      rowLabelEls[i].style.minHeight = '0';
+    }
   }
 
   private updateEmotionCurveLayout(): void {

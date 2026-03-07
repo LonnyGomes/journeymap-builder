@@ -165,26 +165,36 @@
 
   .phases-wrapper {
     display: grid !important;
-    grid-template-columns: repeat(var(--export-phase-count, 1), minmax(0, 1fr));
+    grid-template-rows: repeat(6, auto) !important;
+    grid-template-columns: repeat(var(--export-phase-count, 1), minmax(0, 1fr)) !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: unset !important;
     gap: 0;
     width: 100%;
-    min-width: 0;
+    min-width: 0 !important;
   }
 
   .phase-track {
-    flex: 1 1 0;
+    display: grid !important;
+    grid-row: 1 / -1 !important;
+    grid-template-rows: subgrid !important;
     min-width: 0 !important;
     box-sizing: border-box;
     background-color: #fff;
   }
 
   app-phase-column {
-    display: block !important;
+    display: grid !important;
+    grid-row: 1 / -1 !important;
+    grid-template-rows: subgrid !important;
     width: 100% !important;
     min-width: 0 !important;
   }
 
   .phase-column {
+    display: grid !important;
+    grid-row: 1 / -1 !important;
+    grid-template-rows: subgrid !important;
     min-width: 0 !important;
     width: 100% !important;
     box-sizing: border-box;
@@ -401,13 +411,21 @@
 }
 
 .phases-wrapper {
-  display: flex;
+  display: grid;
+  grid-template-rows: repeat(6, auto);
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(220px, 1fr);
   min-width: max-content;
+
+  @media (max-width: 640px) {
+    grid-auto-columns: minmax(180px, 1fr);
+  }
 }
 
 .phase-track {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-row: 1 / -1;
+  grid-template-rows: subgrid;
 }
 
 .emotion-curve-overlay {

@@ -1,6 +1,7 @@
 .phase-column {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-row: 1 / -1;
+  grid-template-rows: subgrid;
   min-width: 220px;
   border-right: 1px solid var(--color-border);
   background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);

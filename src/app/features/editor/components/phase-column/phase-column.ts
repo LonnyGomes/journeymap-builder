@@ -9,6 +9,9 @@ import { PhaseHeader } from '../phase-header/phase-header';
   templateUrl: './phase-column.html',
   styleUrl: './phase-column.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    style: 'display: grid; grid-row: 1 / -1; grid-template-rows: subgrid;',
+  },
 })
 export class PhaseColumn {
   readonly phase = input.required<JourneyPhase>();

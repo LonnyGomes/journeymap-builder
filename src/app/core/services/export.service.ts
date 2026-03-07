@@ -344,9 +344,10 @@ export class ExportService {
       phasesWrapper.style.display = 'grid';
       phasesWrapper.style.width = '100%';
       phasesWrapper.style.minWidth = '0';
-      phasesWrapper.style.alignItems = 'stretch';
       phasesWrapper.style.gap = '0';
+      phasesWrapper.style.gridTemplateRows = 'repeat(6, auto)';
       phasesWrapper.style.gridTemplateColumns = `repeat(${N}, minmax(0, 1fr))`;
+      phasesWrapper.style.gridAutoFlow = 'column';
     }
 
     const addPhaseColumn = root.querySelector('.add-phase-column') as HTMLElement | null;
@@ -361,23 +362,22 @@ export class ExportService {
     }
 
     phaseTracks.forEach((track) => {
-      track.style.display = 'flex';
-      track.style.flexDirection = 'column';
-      track.style.alignItems = 'stretch';
+      track.style.display = 'grid';
+      track.style.gridRow = '1 / -1';
+      track.style.gridTemplateRows = 'subgrid';
       track.style.width = '100%';
       track.style.minWidth = '0';
-      track.style.flex = '1 1 0';
       track.style.boxSizing = 'border-box';
     });
 
     const phaseHosts = Array.from(root.querySelectorAll('app-phase-column')) as HTMLElement[];
     phaseHosts.forEach((host) => {
-      host.style.display = 'block';
+      host.style.display = 'grid';
+      host.style.gridRow = '1 / -1';
+      host.style.gridTemplateRows = 'subgrid';
       host.style.width = '100%';
       host.style.minWidth = '0';
       host.style.maxWidth = 'none';
-      host.style.flex = '1 1 auto';
-      host.style.alignSelf = 'stretch';
       host.style.margin = '0';
       host.style.padding = '0';
       host.style.boxSizing = 'border-box';
