@@ -131,14 +131,21 @@ export class ExportService {
   ): Promise<HTMLCanvasElement> {
     const html2canvas = html2canvasModule.default;
     const captureId = `capture-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    const captureWidth = this.getCaptureWidth(element, map);
-    const captureHeight = this.getCaptureHeight(element);
 
     element.setAttribute('data-export-capture-id', captureId);
 
-    // Measure grid dimensions from the ORIGINAL DOM before cloning.
-    // In the cloned DOM, offsetHeight/offsetWidth can return 0 because
-    // the clone hasn't been laid out yet.
+    // --- Pre-capture: temporarily apply export layout to the ORIGINAL DOM ---
+    // html2canvas reads computed styles/dimensions from the original element,
+    // so the text must be wrapping correctly BEFORE capture starts.
+    const savedStyles = this.applyExportLayoutToOriginal(element, map);
+
+    // Force a synchronous reflow so the browser recalculates layouts
+    void element.offsetHeight;
+
+    const captureWidth = this.getCaptureWidth(element, map);
+    const captureHeight = this.getCaptureHeight(element);
+
+    // Measure grid dimensions from the DOM after export layout is applied
     const origPhasesWrapper = element.querySelector('.phases-wrapper') as HTMLElement | null;
     const gridHeight = origPhasesWrapper
       ? origPhasesWrapper.scrollHeight || origPhasesWrapper.offsetHeight || origPhasesWrapper.clientHeight
@@ -161,6 +168,8 @@ export class ExportService {
 
           if (!clone) return;
 
+          this.injectExportStyleOverrides(clonedDocument);
+
           clone.classList.add('export-mode');
           clone.style.width = `${captureWidth}px`;
           clone.style.minWidth = `${captureWidth}px`;
@@ -169,6 +178,7 @@ export class ExportService {
           clone.style.minHeight = '0';
           clone.style.overflow = 'visible';
           clone.style.boxSizing = 'border-box';
+          this.removeExportGradients(clone);
           this.applyExportInlineLayout(clone);
 
           // Inputs are often clipped in html2canvas; render them as static text for export.
@@ -182,9 +192,79 @@ export class ExportService {
         },
       });
     } finally {
+      // --- Post-capture: restore original DOM styles ---
+      this.restoreOriginalStyles(savedStyles);
       element.removeAttribute('data-export-capture-id');
     }
   }
+
+  private applyExportLayoutToOriginal(
+    element: HTMLElement,
+    map: JourneyMap,
+  ): Array<{ el: HTMLElement; attr: string; prev: string }> {
+    const saved: Array<{ el: HTMLElement; attr: string; prev: string }> = [];
+
+    const save = (el: HTMLElement | null) => {
+      if (el) {
+        saved.push({ el, attr: 'style', prev: el.getAttribute('style') ?? '' });
+      }
+    };
+
+    // Add export-mode class
+    element.classList.add('export-mode');
+    saved.push({ el: element, attr: 'class', prev: element.className.replace(' export-mode', '') });
+
+    // Make phases-scroll not clip content
+    const phasesScroll = element.querySelector('.phases-scroll') as HTMLElement | null;
+    if (phasesScroll) {
+      save(phasesScroll);
+      phasesScroll.style.overflow = 'visible';
+    }
+
+    // Make phases-wrapper a grid
+    const phasesWrapper = element.querySelector('.phases-wrapper') as HTMLElement | null;
+    const phaseTracks = Array.from(element.querySelectorAll('.phase-track')).filter(
+      (t) => t.querySelector('.phase-column'),
+    ) as HTMLElement[];
+
+    if (phasesWrapper && phaseTracks.length > 0) {
+      save(phasesWrapper);
+      phasesWrapper.style.display = 'grid';
+      phasesWrapper.style.gridTemplateColumns = `repeat(${phaseTracks.length}, minmax(0, 1fr))`;
+      phasesWrapper.style.minWidth = '0';
+      phasesWrapper.style.width = '100%';
+    }
+
+    // Hide add-phase column
+    const addPhase = element.querySelector('.add-phase-column') as HTMLElement | null;
+    if (addPhase) {
+      save(addPhase);
+      addPhase.style.display = 'none';
+    }
+
+    // Reset min-width on phase columns so they fit in the grid
+    const phaseColumns = Array.from(element.querySelectorAll('.phase-column')) as HTMLElement[];
+    phaseColumns.forEach((col) => {
+      save(col);
+      col.style.minWidth = '0';
+    });
+
+    return saved;
+  }
+
+  private restoreOriginalStyles(saved: Array<{ el: HTMLElement; attr: string; prev: string }>): void {
+    for (const { el, attr, prev } of saved) {
+      if (attr === 'class') {
+        el.className = prev;
+      } else if (prev) {
+        el.setAttribute(attr, prev);
+      } else {
+        el.removeAttribute(attr);
+      }
+    }
+  }
+
+  private static readonly MIN_EXPORT_COLUMN_WIDTH = 240;
 
   private getCaptureWidth(element: HTMLElement, map: JourneyMap): number {
     const viewportWidth = Math.ceil(element.getBoundingClientRect().width || element.clientWidth || 0);
@@ -196,8 +276,13 @@ export class ExportService {
         ? rowLabelsWidth + Math.max(phaseTrackWidths - addPhaseWidth, 0)
         : 0;
 
+    // Ensure minimum column width so text has room to wrap
+    const minPhaseGridWidth = rowLabelsWidth > 0
+      ? rowLabelsWidth + map.phases.length * ExportService.MIN_EXPORT_COLUMN_WIDTH
+      : 0;
+
     return (
-      Math.ceil(Math.max(viewportWidth, phaseGridWidth, element.scrollWidth, element.clientWidth, 1)) +
+      Math.ceil(Math.max(viewportWidth, phaseGridWidth, minPhaseGridWidth, element.scrollWidth, element.clientWidth, 1)) +
       ExportService.CAPTURE_BLEED_PX
     );
   }
@@ -303,21 +388,31 @@ export class ExportService {
       column.style.setProperty('width', '100%', 'important');
       column.style.setProperty('min-width', '0', 'important');
       column.style.setProperty('max-width', 'none', 'important');
+      column.style.setProperty('overflow', 'visible', 'important');
       column.style.boxSizing = 'border-box';
       column.style.flex = '1 1 auto';
       column.style.margin = '0';
+      column.style.background = '#fff';
     });
 
     const phaseHeaders = Array.from(root.querySelectorAll('.phase-header')) as HTMLElement[];
     phaseHeaders.forEach((header) => {
       header.style.width = '100%';
       header.style.boxSizing = 'border-box';
+      header.style.borderTopColor = '#0f766e';
+    });
+
+    const phaseNumbers = Array.from(root.querySelectorAll('.phase-number')) as HTMLElement[];
+    phaseNumbers.forEach((badge) => {
+      badge.style.backgroundColor = '#0f766e';
     });
 
     const phaseCells = Array.from(root.querySelectorAll('.phase-cell')) as HTMLElement[];
     phaseCells.forEach((cell) => {
       cell.style.width = '100%';
       cell.style.boxSizing = 'border-box';
+      cell.style.overflow = 'visible';
+      cell.style.height = 'auto';
     });
 
     const emotionButtons = Array.from(root.querySelectorAll('.emotion-btn')) as HTMLElement[];
@@ -325,6 +420,12 @@ export class ExportService {
       button.style.width = '100%';
       button.style.maxWidth = 'none';
       button.style.boxSizing = 'border-box';
+      button.style.border = 'none';
+      button.style.background = 'transparent';
+      button.style.display = 'flex';
+      button.style.flexDirection = 'column';
+      button.style.alignItems = 'center';
+      button.style.justifyContent = 'center';
     });
 
     const emotionCurveOverlay = root.querySelector('.emotion-curve-overlay') as HTMLElement | null;
@@ -335,6 +436,43 @@ export class ExportService {
     const emotionCurves = Array.from(root.querySelectorAll('.emotion-curve-svg')) as SVGElement[];
     emotionCurves.forEach((curve) => {
       curve.style.width = '100%';
+    });
+
+    // Ensure display-content text wraps properly.
+    // Reset any copied pixel widths so content reflows to the grid column width.
+    const displayContents = Array.from(root.querySelectorAll('.display-content')) as HTMLElement[];
+    displayContents.forEach((el) => {
+      el.style.setProperty('white-space', 'normal', 'important');
+      el.style.setProperty('word-break', 'break-word', 'important');
+      el.style.setProperty('overflow-wrap', 'break-word', 'important');
+      el.style.setProperty('overflow', 'visible', 'important');
+      el.style.setProperty('height', 'auto', 'important');
+      el.style.setProperty('min-height', '0', 'important');
+      el.style.setProperty('width', 'auto', 'important');
+      el.style.setProperty('max-width', '100%', 'important');
+      el.style.setProperty('box-sizing', 'border-box', 'important');
+    });
+
+    // Ensure editable-cell hosts allow content to flow
+    const editableCells = Array.from(root.querySelectorAll('app-editable-cell')) as HTMLElement[];
+    editableCells.forEach((el) => {
+      el.style.setProperty('overflow', 'visible', 'important');
+      el.style.setProperty('height', 'auto', 'important');
+      el.style.setProperty('width', '100%', 'important');
+      el.style.setProperty('max-width', '100%', 'important');
+      el.style.setProperty('box-sizing', 'border-box', 'important');
+      el.style.display = 'block';
+    });
+
+    // Ensure markdown content and text spans wrap
+    const contentTexts = Array.from(root.querySelectorAll('.content-text, .placeholder-text')) as HTMLElement[];
+    contentTexts.forEach((el) => {
+      el.style.setProperty('white-space', 'normal', 'important');
+      el.style.setProperty('word-break', 'break-word', 'important');
+      el.style.setProperty('overflow-wrap', 'break-word', 'important');
+      el.style.setProperty('overflow', 'visible', 'important');
+      el.style.setProperty('max-width', '100%', 'important');
+      el.style.display = 'block';
     });
 
     this.hideElements(root, '.add-phase-column');
@@ -360,6 +498,7 @@ export class ExportService {
 
       const computed = view?.getComputedStyle(input);
       if (computed) {
+        const isPhaseNameInput = input.classList.contains('phase-name-input');
         staticNode.style.font = computed.font;
         staticNode.style.fontSize = computed.fontSize;
         staticNode.style.fontWeight = computed.fontWeight;
@@ -372,7 +511,7 @@ export class ExportService {
         staticNode.style.borderRadius = computed.borderRadius;
         staticNode.style.width = computed.width;
         staticNode.style.minWidth = computed.minWidth;
-        staticNode.style.minHeight = input.classList.contains('phase-name-input') ? '0' : computed.height;
+        staticNode.style.minHeight = isPhaseNameInput ? '0' : computed.height;
         staticNode.style.flex = computed.flex;
         staticNode.style.flexGrow = computed.flexGrow;
         staticNode.style.flexShrink = computed.flexShrink;
@@ -381,6 +520,12 @@ export class ExportService {
         staticNode.style.boxSizing = computed.boxSizing;
         staticNode.style.display = 'flex';
         staticNode.style.alignItems = 'center';
+        if (!isPhaseNameInput) {
+          staticNode.style.whiteSpace = 'normal';
+          staticNode.style.wordBreak = 'break-word';
+          staticNode.style.overflow = 'visible';
+          staticNode.style.height = 'auto';
+        }
       }
 
       input.replaceWith(staticNode);
@@ -720,7 +865,7 @@ export class ExportService {
     container.style.width = '100%';
     container.style.height = `${height}px`;
     container.style.minHeight = `${height}px`;
-    container.style.background = 'linear-gradient(180deg, rgba(237, 249, 247, 0.22), rgba(255, 255, 255, 0))';
+    container.style.background = 'transparent';
 
     const svg = doc.createElementNS(ns, 'svg');
     svg.setAttribute('width', `${width}`);
@@ -891,6 +1036,97 @@ export class ExportService {
   ): string {
     const value = computedStyle?.getPropertyValue(variableName).trim();
     return value ? value : fallback;
+  }
+
+  private injectExportStyleOverrides(doc: Document): void {
+    const style = doc.createElement('style');
+    style.textContent = `
+      .export-mode .display-content,
+      .export-mode .content-text,
+      .export-mode .markdown-content,
+      .export-mode .placeholder-text {
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        max-width: 100% !important;
+      }
+      .export-mode .display-content {
+        height: auto !important;
+        min-height: 0 !important;
+        width: auto !important;
+      }
+      .export-mode .phase-cell {
+        overflow: visible !important;
+        height: auto !important;
+      }
+      .export-mode app-editable-cell {
+        overflow: visible !important;
+        height: auto !important;
+        width: 100% !important;
+      }
+      .export-mode .phase-column {
+        min-width: 0 !important;
+        overflow: visible !important;
+        background: #fff !important;
+      }
+      .export-mode .emotion-btn {
+        border: none !important;
+        background: transparent !important;
+      }
+      .export-mode .header-section {
+        background: #fff !important;
+      }
+      .export-mode .row-label-icon {
+        overflow: visible !important;
+      }
+    `;
+    doc.head.appendChild(style);
+  }
+
+  private removeExportGradients(root: HTMLElement): void {
+    // Remove header section gradient
+    const headerSection = root.querySelector('.header-section') as HTMLElement | null;
+    if (headerSection) {
+      headerSection.style.background = '#fff';
+    }
+
+    // Remove editor-body gradient
+    const editorBody = root.querySelector('.editor-body') as HTMLElement | null;
+    if (editorBody) {
+      editorBody.style.background = '#fff';
+    }
+
+    // Remove phase column gradients
+    const phaseColumns = Array.from(root.querySelectorAll('.phase-column')) as HTMLElement[];
+    phaseColumns.forEach((col) => {
+      col.style.background = '#fff';
+    });
+
+    // Remove phase header gradients
+    const phaseHeaders = Array.from(root.querySelectorAll('.phase-header')) as HTMLElement[];
+    phaseHeaders.forEach((header) => {
+      header.style.background = 'linear-gradient(180deg, #f7fbfd 0%, #f2f8fb 100%)';
+    });
+
+    // Remove row-labels gradient
+    const rowLabels = root.querySelector('.row-labels') as HTMLElement | null;
+    if (rowLabels) {
+      rowLabels.style.background = '#f8fbfd';
+    }
+
+    // Remove emotion-arc-spacer gradient
+    const arcSpacers = Array.from(root.querySelectorAll('.emotion-arc-spacer')) as HTMLElement[];
+    arcSpacers.forEach((spacer) => {
+      spacer.style.background = 'transparent';
+    });
+
+    // Fix row-label icons overflow
+    const rowLabelIcons = Array.from(root.querySelectorAll('.row-label-icon')) as HTMLElement[];
+    rowLabelIcons.forEach((icon) => {
+      icon.style.overflow = 'visible';
+    });
   }
 
   private hideElements(root: HTMLElement, selector: string): void {
