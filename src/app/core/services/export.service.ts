@@ -392,7 +392,7 @@ export class ExportService {
       column.style.boxSizing = 'border-box';
       column.style.flex = '1 1 auto';
       column.style.margin = '0';
-      column.style.background = '#fff';
+      column.style.background = '#f8fbfd';
     });
 
     const phaseHeaders = Array.from(root.querySelectorAll('.phase-header')) as HTMLElement[];
@@ -666,10 +666,9 @@ export class ExportService {
         phaseName.style.margin = '0';
         phaseName.style.display = 'flex';
         phaseName.style.alignItems = 'center';
-        phaseName.style.lineHeight = '1.25';
+        phaseName.style.lineHeight = '1.4';
         phaseName.style.whiteSpace = 'nowrap';
-        phaseName.style.overflow = 'hidden';
-        phaseName.style.textOverflow = 'ellipsis';
+        phaseName.style.overflow = 'visible';
         phaseName.style.minHeight = '0';
         phaseName.style.height = 'auto';
       }

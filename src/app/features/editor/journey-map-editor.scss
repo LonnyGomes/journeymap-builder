@@ -180,7 +180,7 @@
     grid-template-rows: subgrid !important;
     min-width: 0 !important;
     box-sizing: border-box;
-    background-color: #fff;
+    background-color: #f8fbfd;
   }
 
   app-phase-column {
@@ -198,7 +198,7 @@
     min-width: 0 !important;
     width: 100% !important;
     box-sizing: border-box;
-    background: #fff !important;
+    background: #f8fbfd !important;
   }
 
   .row-labels {
@@ -240,14 +240,13 @@
     min-width: 0;
     max-width: 100%;
     margin: 0;
-    line-height: 1.25;
+    line-height: 1.4;
     display: flex !important;
     align-items: center !important;
     min-height: 0 !important;
     height: auto !important;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow: visible;
   }
 
   .emotion-btn {
